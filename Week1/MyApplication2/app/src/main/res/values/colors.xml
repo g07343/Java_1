@@ -6,8 +6,8 @@
     <color name="green">#00FF00</color>
     <color name="magenta">#7B238D</color>
     <color name="orange">#FF6500</color>
-
-    <array name="allColors">
+    <color name="original_bg">#D6D6D6</color>
+    <array name="allColorsHex">
         <item>@color/red</item>
         <item>@color/blue</item>
         <item>@color/yellow</item>

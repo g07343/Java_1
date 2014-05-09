@@ -15,14 +15,13 @@ import android.view.View;
 import android.widget.*;
 import android.graphics.Color;
 import android.view.View.OnClickListener;
-import java.util.Timer;
+import java.util.Random;
+
 
 public class MainActivity extends Activity {
     //declare our global variables
     LinearLayout baseLayoutGlobal;
     Boolean discoOn = false;
-    int[] colorArray = getResources().getIntArray(R.array.allColors);
-    Timer colorTimer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +30,11 @@ public class MainActivity extends Activity {
         //setContentView(R.layout.activity_main);
 
         //create a linear layout and set that instead
-        LinearLayout baseLayout = new LinearLayout(this);
+        final LinearLayout baseLayout = new LinearLayout(this);
         baseLayoutGlobal = baseLayout;
         baseLayout.setId(getResources().getInteger(R.integer.base_id));
         baseLayout.setOrientation(LinearLayout.VERTICAL);
-        baseLayout.setBackgroundColor(Color.parseColor("#D6D6D6"));
+        baseLayout.setBackgroundColor(Color.parseColor(getString(R.string.original_bg)));
         //set our content view that we created
         setContentView(baseLayout);
 
@@ -166,8 +165,14 @@ public class MainActivity extends Activity {
                 } else {
                     randomButton.setText(R.string.stopBtn_title);
                     discoOn = true;
-                    //fire the craziness function
-                    getNuts();
+                    Random random = new Random();
+                    int r = Math.abs(random.nextInt());
+                    int g = Math.abs(random.nextInt());
+                    int b = Math.abs(random.nextInt());
+                    System.out.println("R value is:  " +r);
+                    System.out.println("G value is:  " +g);
+                    System.out.println("B value is:  " +b);
+                    baseLayout.setBackgroundColor(Color.rgb(r,g,b));
                 }
             }
         });
@@ -213,8 +218,7 @@ public class MainActivity extends Activity {
     }
     //set our color when the user taps the button according to the string passed
     public void setColor(String color) {
-        //get our base layout so we can dynamically shift its colors
-        //LinearLayout background = colo;
+
         if (color.equals("red") || color.equals("Red"))
         {
             //use our global var we set earlier to change color
@@ -236,22 +240,6 @@ public class MainActivity extends Activity {
             baseLayoutGlobal.setBackgroundColor(Color.parseColor("#FF6500"));
         } else {
             System.out.println("Color not found: " + color);
-        }
-
-    }
-
-    public void getNuts() {
-        if(discoOn.equals(true))
-        {
-            System.out.println("Number of items in colors array is: " + colorArray.length);
-           for(int i=0; i < colorArray.length; i++)
-           {
-               baseLayoutGlobal.setBackgroundColor(colorArray[i]);
-               if (i == 5)
-               {
-                  i = 0;
-               }
-           }
         }
     }
 

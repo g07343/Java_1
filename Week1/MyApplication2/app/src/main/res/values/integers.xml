@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="color_width">150</integer>
+    <integer name="color_width">180</integer>
+    <integer name="color_height">80</integer>
 </resources>

@@ -1,3 +1,9 @@
+//Matthew Lewis
+//Term 1405
+//Project 1
+
+
+
 package com.mattlewis.colorpicker;
 
 import android.app.Activity;
@@ -5,8 +11,10 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.*;
 import android.graphics.Color;
+import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity {
 
@@ -39,16 +47,26 @@ public class MainActivity extends Activity {
         TextView green = new TextView(this);
         TextView purple = new TextView(this);
         TextView orange = new TextView(this);
-        //create layout params to apply to each
 
 
-        LinearLayout.LayoutParams colorParams = new LinearLayout.LayoutParams(getResources().getInteger(R.integer.color_width), LinearLayout.LayoutParams.WRAP_CONTENT);
 
+        //create layout params to apply to each color
+        LinearLayout.LayoutParams colorParams = new LinearLayout.LayoutParams(getResources().getInteger(R.integer.color_width), getResources().getInteger(R.integer.color_height));
+        colorParams.setMargins(0,80,0,80);
+
+        //set up each of our colors and the unique info that goes along with them
         red.setLayoutParams(colorParams);
         red.setTextColor(Color.WHITE);
         red.setBackgroundColor(Color.RED);
         red.setText(R.string.red);
         red.setGravity(Gravity.CENTER);
+        red.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("USER TAPPED RED!!!");
+            }
+        });
+
 
         blue.setLayoutParams(colorParams);
         blue.setTextColor(Color.WHITE);
@@ -81,10 +99,18 @@ public class MainActivity extends Activity {
         orange.setGravity(Gravity.CENTER);
         orange.setText(R.string.orange);
 
-        //create our button
-        Button testButton = new Button(this);
-        testButton.setText(R.string.button_title);
+        //create an EditText view we can allow the user to type into and populate
+        final EditText colorField = new EditText(this);
 
+        //create our button
+        Button pickButton = new Button(this);
+        pickButton.setText(R.string.button_title);
+        pickButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setColor(colorField.getText().toString());
+            }
+        });
         LinearLayout colorLayout = new LinearLayout(this);
         
         colorLayout.addView(red);
@@ -94,11 +120,16 @@ public class MainActivity extends Activity {
         colorLayout.addView(purple);
         colorLayout.addView(orange);
 
+
+
+
+
         //add everything
         labelLayout.addView(instructions);
         baseLayout.addView(labelLayout);
         baseLayout.addView(colorLayout);
-        labelLayout.addView(testButton);
+        baseLayout.addView(colorField);
+        baseLayout.addView(pickButton);
 
     }
 
@@ -121,4 +152,11 @@ public class MainActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    //set our color when the user taps the button according to the string passed
+    public void setColor(String color) {
+        System.out.println(color + " was chosen!");
+
+    }
+
 }
+

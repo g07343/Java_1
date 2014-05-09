@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red">#FF0000</color>
+    <color name="blue">#0000FF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="green">#00FF00</color>
+    <color name="magenta">#7B238D</color>
+    <color name="orange">#FF6500</color>
+
+    <array name="allColors">
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/magenta</item>
+        <item>@color/orange</item>
+    </array>
+</resources>

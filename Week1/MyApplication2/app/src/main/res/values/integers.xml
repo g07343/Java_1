@@ -2,4 +2,5 @@
 <resources>
     <integer name="color_width">180</integer>
     <integer name="color_height">80</integer>
+    <integer name="base_id">50</integer>
 </resources>

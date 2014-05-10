@@ -13,6 +13,8 @@
     <string name="yellow">Yellow</string>
     <string name="green">Green</string>
     <string name="purple">Purple</string>
+    <string name="purple_hex">#7B238D</string>
     <string name="orange">Orange</string>
+    <string name="orange_hex">#FF6500</string>
     <string name="original_bg">#D6D6D6</string>
 </resources>

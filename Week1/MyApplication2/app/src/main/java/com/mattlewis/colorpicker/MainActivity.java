@@ -66,7 +66,6 @@ public class MainActivity extends Activity {
         red.setLayoutParams(colorParams);
         red.setTextColor(Color.WHITE);
         red.setBackgroundColor(Color.RED);
-        red.setText(R.string.red);
         red.setGravity(Gravity.CENTER);
         red.setOnClickListener(new OnClickListener() {
             @Override
@@ -80,7 +79,6 @@ public class MainActivity extends Activity {
         blue.setTextColor(Color.WHITE);
         blue.setBackgroundColor(Color.BLUE);
         blue.setGravity(Gravity.CENTER);
-        blue.setText(R.string.blue);
         blue.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +90,6 @@ public class MainActivity extends Activity {
         yellow.setTextColor(Color.BLACK);
         yellow.setBackgroundColor(Color.YELLOW);
         yellow.setGravity(Gravity.CENTER);
-        yellow.setText(R.string.yellow);
         yellow.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +102,6 @@ public class MainActivity extends Activity {
         green.setTextColor(Color.BLACK);
         green.setBackgroundColor(Color.GREEN);
         green.setGravity(Gravity.CENTER);
-        green.setText(R.string.green);
         green.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,9 +111,8 @@ public class MainActivity extends Activity {
 
         purple.setLayoutParams(colorParams);
         purple.setTextColor(Color.WHITE);
-        purple.setBackgroundColor(Color.parseColor("#7B238D"));
+        purple.setBackgroundColor(Color.parseColor(getString(R.string.purple_hex)));
         purple.setGravity(Gravity.CENTER);
-        purple.setText(R.string.purple);
         purple.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,15 +122,24 @@ public class MainActivity extends Activity {
 
         orange.setLayoutParams(colorParams);
         orange.setTextColor(Color.BLACK);
-        orange.setBackgroundColor(Color.parseColor("#FF6500"));
+        orange.setBackgroundColor(Color.parseColor(getString(R.string.orange_hex)));
         orange.setGravity(Gravity.CENTER);
-        orange.setText(R.string.orange);
         orange.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 colorField.setText(R.string.orange);
             }
         });
+
+        //Create a couple arrays to dynamically set out labels
+        String[] titles = {getString(R.string.red), getString(R.string.blue), getString(R.string.yellow), getString(R.string.green), getString(R.string.purple), getString(R.string.orange)};
+        TextView[] buttons = {red, blue, yellow, green, purple, orange};
+
+        //now that we have our arrays, loop through, assigning titles
+        for(int i = 0; i < buttons.length; i++)
+        {
+            buttons[i].setText(titles[i]);
+        }
 
         //create an EditText view we can allow the user to type into and populate
 
@@ -161,17 +165,19 @@ public class MainActivity extends Activity {
                 {
                     randomButton.setText(R.string.crazyBtn_title);
                     discoOn = false;
-                    baseLayoutGlobal.setBackgroundColor(Color.parseColor("#D6D6D6"));
+                    baseLayoutGlobal.setBackgroundColor(Color.parseColor(getString(R.string.original_bg)));
                 } else {
+                    //set our button title
                     randomButton.setText(R.string.stopBtn_title);
+                    //set our boolean
                     discoOn = true;
+                    //create a random object to calculate colors against
                     Random random = new Random();
+                    //create integers to create our red blue and green values
                     int r = Math.abs(random.nextInt());
                     int g = Math.abs(random.nextInt());
                     int b = Math.abs(random.nextInt());
-                    System.out.println("R value is:  " +r);
-                    System.out.println("G value is:  " +g);
-                    System.out.println("B value is:  " +b);
+                    //set our randomly created color to the background
                     baseLayout.setBackgroundColor(Color.rgb(r,g,b));
                 }
             }
@@ -234,10 +240,10 @@ public class MainActivity extends Activity {
             baseLayoutGlobal.setBackgroundColor(Color.GREEN);
         } else if (color.equals("purple") || color.equals("Purple"))
         {
-            baseLayoutGlobal.setBackgroundColor(Color.parseColor("#7B238D"));
+            baseLayoutGlobal.setBackgroundColor(Color.parseColor(getString(R.string.purple_hex)));
         } else if (color.equals("orange") || color.equals("Orange"))
         {
-            baseLayoutGlobal.setBackgroundColor(Color.parseColor("#FF6500"));
+            baseLayoutGlobal.setBackgroundColor(Color.parseColor(getString(R.string.orange_hex)));
         } else {
             System.out.println("Color not found: " + color);
         }

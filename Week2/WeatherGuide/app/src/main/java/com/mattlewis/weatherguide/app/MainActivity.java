@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
+import com.mattlewis.weatherguide.app.jsonHandler.JsonControl;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
@@ -35,11 +35,10 @@ public class MainActivity extends Activity {
             this.lowTemp = low;
             this.forecast = forecast;
        }
-
+        //we can use this to determine the day of the week, which is displayed at the top of the interface
        public static String getToday() {
             Calendar calendar = Calendar.getInstance();
             int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
-            System.out.println("Day of week is:  " + currentDay);
             String current;
             switch (currentDay){
                 case 1:
@@ -74,6 +73,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         String today = days.getToday();
+        JsonControl.createJson();
         System.out.println("Today is:  " + today);
         TextView textView = (TextView) findViewById(R.id.default_textview);
         textView.setText(today);

@@ -12,4 +12,7 @@
     <item
         type="id"
         name="day_selector"/>
+    <item
+        type="id"
+        name="weather_holder"/>
 </resources>

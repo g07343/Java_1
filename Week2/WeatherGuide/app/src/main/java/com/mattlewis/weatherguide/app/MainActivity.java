@@ -72,13 +72,22 @@ public static String[] _week;
         TextView textView = (TextView) findViewById(R.id.selected_day);
         textView.setText(today);
 
-        String saturdayWeather = JsonControl.readJson("Saturday");
-        System.out.println("Saturday's weather is:  " + saturdayWeather);
+
+        //now that we know what today is, get it's weather and set to text view
+        String todaysWeather = JsonControl.readJson(today);
+        TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+        weatherView.setText(todaysWeather);
+
+        //create our spinner for users to pick a day
+        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+        
 
     }
+
+
     //this method simply creates our dynamic 7 day week array
     private void createWeek(String today) {
-        //since we can't use a switch statement with a string, use if/else (sigh..)
+        //since we can't use a switch statement with a string (not Java 7+), use if/else (sigh..)
 
         if (today.equals("Monday"))
         {

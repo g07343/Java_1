@@ -17,9 +17,10 @@ public class JsonControl {
 
         //create an inner object to hold each day of the week object
         JSONObject weekDays = new JSONObject();
-        JSONObject dayObject = new JSONObject();
+
         for (int i = 1; i <= 7; i++)
         {
+            JSONObject dayObject = new JSONObject();
             try {
                 switch (i) {
                     case 1:

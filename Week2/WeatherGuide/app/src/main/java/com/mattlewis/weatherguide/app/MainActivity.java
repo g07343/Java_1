@@ -6,13 +6,16 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.*;
 import com.mattlewis.weatherguide.app.jsonHandler.JsonControl;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
+Context mContext;
 //set up a public string to communicate which day of the week is current
 public static String _current;
 
@@ -78,10 +81,34 @@ public static String[] _week;
         TextView weatherView = (TextView) findViewById(R.id.weather_holder);
         weatherView.setText(todaysWeather);
 
+        //create our arrayAdapter for the spinner
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, _week);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         //create our spinner for users to pick a day
         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-        
+        spinner.setAdapter(spinnerAdapter);
 
+        //create our onItemSelected method
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = _week[position];
+                if (selected.equals(_current))
+                {
+                    return;
+                } else {
+                    _current = selected;
+                   setDay(selected);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 
@@ -113,6 +140,21 @@ public static String[] _week;
         }
     }
 
+    //this function gets called whenever the user selects a new day from the spinner.  Updates the UI accordingly
+    public void setDay(String day) {
+        //set our label to something that makes more sense
+        TextView dayLabel = (TextView) findViewById(R.id.selected_label);
+        dayLabel.setText("Selected day is:");
+
+        //set our newly selected day
+        TextView selectedDay = (TextView) findViewById(R.id.selected_day);
+        selectedDay.setText(day);
+
+        //update our weather information to the correct day
+        String weather = JsonControl.readJson(day);
+        TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
+        selectedWeather.setText(weather);
+    }
 
 
     @Override

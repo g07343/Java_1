@@ -77,6 +77,9 @@ public class MainActivity extends Activity {
         System.out.println("Today is:  " + today);
         TextView textView = (TextView) findViewById(R.id.default_textview);
         textView.setText(today);
+        String saturdayWeather = JsonControl.readJson("Saturday");
+        System.out.println("Saturday's weather is:  " + saturdayWeather);
+
     }
 
 

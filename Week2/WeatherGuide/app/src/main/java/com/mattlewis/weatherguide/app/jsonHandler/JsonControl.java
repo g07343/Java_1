@@ -90,11 +90,31 @@ public class JsonControl {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return weatherDays;
     }
 
-    public static String readJson(){
+    public static String readJson(String selected){
+        //set up our strings to contain our data
+        String requested, high, low, forecast;
 
-        return null;
+        //use our above method to give us the completely built JSON object to pull data from
+        JSONObject builtJSON = createJson();
+
+        //try/catch, because Java is picky and crazy
+        try {
+            //pull each bit of data out for whatever day is passed
+            high = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("high");
+            low = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("low");
+            forecast = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("forecast");
+
+            //put all of our information into one string to return to caller
+            requested = "High:  " + high + "Low:  " + low + "\r\n"
+                    + "Forecast:  " + forecast;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            requested = e.toString();
+        }
+
+        return requested;
     }
 }

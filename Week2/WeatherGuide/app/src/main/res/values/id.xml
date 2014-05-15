@@ -2,5 +2,14 @@
 <resources>
     <item
         type="id"
-        name="default_textview" />
+        name="selected_day" />
+    <item
+        type="id"
+        name="grid_view"/>
+    <item
+        type="id"
+        name="selected_label"/>
+    <item
+        type="id"
+        name="day_selector"/>
 </resources>

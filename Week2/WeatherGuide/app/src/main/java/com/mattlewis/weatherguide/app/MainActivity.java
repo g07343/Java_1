@@ -8,79 +8,102 @@ package com.mattlewis.weatherguide.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.*;
 import com.mattlewis.weatherguide.app.jsonHandler.JsonControl;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
+//set up a public string to communicate which day of the week is current
+public static String _current;
 
-    //create our enum days of the week, and for now assign static parameters to them
-    //these will need to be dynamic later when pulling in remote JSON data
-   public enum days {
-        SUNDAY(84, 72, "Sunny"),
-        MONDAY(79, 74, "Overcast"),
-        TUESDAY(89, 80, "Rainy"),
-        WEDNESDAY(94, 86, "Rainy"),
-        THURSDAY(88, 85, "Sunny"),
-        FRIDAY(74, 71, "overcast"),
-        SATURDAY(90, 84, "Sunny");
+//set up a public array to hold the days in a specific order (for correct viewing in widgets)
+//**Want to create this manually using individual strings in strings.xml so that we can cater it to today's day of the week (not predefined array)
+public static String[] _week;
 
-        private final int highTemp;
-        private final int lowTemp;
-        private final String forecast;
 
-        days(int high, int low, String forecast) {
-            this.highTemp = high;
-            this.lowTemp = low;
-            this.forecast = forecast;
-       }
-        //we can use this to determine the day of the week, which is displayed at the top of the interface
-       public static String getToday() {
-            Calendar calendar = Calendar.getInstance();
-            int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
-            String current;
-            switch (currentDay){
-                case 1:
-                    current = "Sunday";
-                    break;
-                case 2:
-                    current = "Monday";
-                    break;
-                case 3:
-                    current = "Tuesday";
-                    break;
-                case 4:
-                    current = "Wednesday";
-                    break;
-                case 5:
-                    current = "Thursday";
-                    break;
-                case 6:
-                    current = "Friday";
-                    break;
-                case 7:
-                    current = "Saturday";
-                    break;
-                default:
-                    return "Day not found!";
-            }
-            return current;
+    //we can use this to determine the day of the week, which is displayed at the top of the interface
+    public String getToday() {
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+        //depending on the day int value, set the current day String
+        switch (currentDay){
+            case 1:
+                _current = getString(R.string.sunday_text);
+                break;
+            case 2:
+                _current = getString(R.string.monday_text);
+                break;
+            case 3:
+                _current = getString(R.string.tuesday_text);
+                break;
+            case 4:
+                _current = getString(R.string.wednesday_text);
+                break;
+            case 5:
+                _current = getString(R.string.thursday_text);
+                break;
+            case 6:
+                _current = getString(R.string.friday_text);
+                break;
+            case 7:
+                _current = getString(R.string.saturday_text);
+                break;
+            default:
+                return "Day not found!";
         }
+        //now that we know what today is, create our dynamic array of 7 days
+        createWeek(_current);
+        return _current;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //set our default content view
         setContentView(R.layout.activity_main);
-        String today = days.getToday();
+
+        //get today's current day of the week as a string
+        String today = getToday();
+
+        //create our JSON object now to pull from
         JsonControl.createJson();
-        System.out.println("Today is:  " + today);
-        TextView textView = (TextView) findViewById(R.id.default_textview);
+        //find our selected day and set the current day as our default (can be changed later)
+        TextView textView = (TextView) findViewById(R.id.selected_day);
         textView.setText(today);
+
         String saturdayWeather = JsonControl.readJson("Saturday");
         System.out.println("Saturday's weather is:  " + saturdayWeather);
 
     }
+    //this method simply creates our dynamic 7 day week array
+    private void createWeek(String today) {
+        //since we can't use a switch statement with a string, use if/else (sigh..)
+
+        if (today.equals("Monday"))
+        {
+            _week = new String[]{getString(R.string.monday_text), getString(R.string.tuesday_text), getString(R.string.wednesday_text), getString(R.string.thursday_text), getString(R.string.friday_text), getString(R.string.saturday_text), getString(R.string.sunday_text)};
+        } else if(today.equals("Tuesday"))
+        {
+            _week = new String[]{getString(R.string.tuesday_text), getString(R.string.wednesday_text), getString(R.string.thursday_text), getString(R.string.friday_text), getString(R.string.saturday_text), getString(R.string.sunday_text), getString(R.string.monday_text)};
+        } else if (today.equals("Wednesday"))
+        {
+            _week = new String[]{getString(R.string.wednesday_text), getString(R.string.thursday_text), getString(R.string.friday_text), getString(R.string.saturday_text), getString(R.string.sunday_text), getString(R.string.monday_text), getString(R.string.tuesday_text)};
+        } else if (today.equals("Thursday"))
+        {
+            _week = new String[]{getString(R.string.thursday_text), getString(R.string.friday_text), getString(R.string.saturday_text), getString(R.string.sunday_text), getString(R.string.monday_text), getString(R.string.tuesday_text), getString(R.string.wednesday_text)};
+        } else if (today.equals("Friday"))
+        {
+            _week = new String[]{getString(R.string.friday_text), getString(R.string.saturday_text), getString(R.string.sunday_text), getString(R.string.monday_text), getString(R.string.tuesday_text), getString(R.string.wednesday_text), getString(R.string.thursday_text)};
+        } else if (today.equals("Saturday"))
+        {
+            _week = new String[]{getString(R.string.saturday_text), getString(R.string.sunday_text), getString(R.string.monday_text), getString(R.string.tuesday_text), getString(R.string.wednesday_text), getString(R.string.thursday_text), getString(R.string.friday_text)};
+        } else if (today.equals("Sunday"))
+        {
+            _week = new String[]{getString(R.string.sunday_text), getString(R.string.monday_text), getString(R.string.tuesday_text), getString(R.string.wednesday_text), getString(R.string.thursday_text), getString(R.string.friday_text), getString(R.string.saturday_text)};
+        }
+    }
+
 
 
     @Override
@@ -89,16 +112,7 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
+
+
+

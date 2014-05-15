@@ -7,9 +7,7 @@ package com.mattlewis.weatherguide.app.jsonHandler;
 
 import java.util.Calendar;
 
-/**
- * Created by Matt on 5/14/14.
- */
+//this is basically just our enum class to provide data to the JsonControl class.  As such, it is part of the "jsonHandler" package until we start utilizing live data later
 public class Days {
 
 
@@ -48,69 +46,6 @@ public class Days {
         }
 
 
-        //we can use this to determine the day of the week, which is displayed at the top of the interface
-        public static String getToday() {
-            Calendar calendar = Calendar.getInstance();
-            int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
-            String current;
-            switch (currentDay){
-                case 1:
-                    current = "Sunday";
-                    break;
-                case 2:
-                    current = "Monday";
-                    break;
-                case 3:
-                    current = "Tuesday";
-                    break;
-                case 4:
-                    current = "Wednesday";
-                    break;
-                case 5:
-                    current = "Thursday";
-                    break;
-                case 6:
-                    current = "Friday";
-                    break;
-                case 7:
-                    current = "Saturday";
-                    break;
-                default:
-                    return "Day not found!";
-            }
-            return current;
-        }
-
-    }
-
-    public Days(int day) {
-        switch (day){
-            case 1:
-               int high =  days.SUNDAY.setHighTemp();
-                days.SUNDAY.setLowTemp();
-                days.SUNDAY.setForecast();
-                break;
-            case 2:
-//                current = "Monday";
-                break;
-            case 3:
-//                current = "Tuesday";
-                break;
-            case 4:
-//                current = "Wednesday";
-                break;
-            case 5:
-//                current = "Thursday";
-                break;
-            case 6:
-//                current = "Friday";
-                break;
-            case 7:
-//                current = "Saturday";
-                break;
-            default:
-//                return "Day not found!";
-        }
     }
 
 }

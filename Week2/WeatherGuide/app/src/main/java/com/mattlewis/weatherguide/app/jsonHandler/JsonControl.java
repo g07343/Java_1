@@ -108,7 +108,7 @@ public class JsonControl {
             forecast = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("forecast");
 
             //put all of our information into one string to return to caller
-            requested = "High:  " + high + "Low:  " + low + "\r\n"
+            requested = "High:  " + high + "  Low:  " + low + "\r\n"
                     + "Forecast:  " + forecast;
         } catch (JSONException e) {
             e.printStackTrace();

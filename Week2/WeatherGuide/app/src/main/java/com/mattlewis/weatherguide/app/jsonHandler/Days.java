@@ -11,6 +11,7 @@ public class Days {
 
 
     public enum days {
+        //just set enums with static data for now
         SUNDAY(84, 72, "Sunny", "Sunday"),
         MONDAY(79, 74, "Overcast", "Monday"),
         TUESDAY(89, 80, "Rainy", "Tuesday"),

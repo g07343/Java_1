@@ -6,7 +6,6 @@ package com.mattlewis.weatherguide.app.jsonHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.mattlewis.weatherguide.app.jsonHandler.Days;
 
 //this class will be in charge of building a json object and reading it.
 public class JsonControl {
@@ -93,8 +92,8 @@ public class JsonControl {
         }
         return weatherDays;
     }
-
-    public static String readJson(String selected){
+    //the below function returns single day's weather values
+    public static String readJson(String selected, Boolean title){
         //set up our strings to contain our data
         String requested, high, low, forecast;
 
@@ -107,10 +106,17 @@ public class JsonControl {
             high = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("high");
             low = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("low");
             forecast = builtJSON.getJSONObject("WeekDays").getJSONObject(selected).getString("forecast");
-
-            //put all of our information into one string to return to caller
-            requested = "High:  " + high + "  Low:  " + low + "\r\n"
-                    + "Forecast:  " + forecast;
+            //check if we want the title of the day returned as part of our string
+            if(title)
+            {
+                //put all of our information into one string to return to caller
+                requested = selected + "\r\n" + "\r\n" + "High:  " + high + "  Low:  " + low + "\r\n"
+                        + "Forecast:  " + forecast + "\r\n";
+            } else {
+                //put all of our information into one string to return to caller
+                requested = "High:  " + high + "  Low:  " + low + "\r\n"
+                        + "Forecast:  " + forecast;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             requested = e.toString();

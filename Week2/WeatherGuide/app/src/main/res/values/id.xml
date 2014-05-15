@@ -15,4 +15,7 @@
     <item
         type="id"
         name="weather_holder"/>
+    <item
+        type="id"
+        name="weather_grid"/>
 </resources>

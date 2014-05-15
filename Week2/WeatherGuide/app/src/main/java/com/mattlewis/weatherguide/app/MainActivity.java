@@ -6,7 +6,6 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -15,7 +14,7 @@ import com.mattlewis.weatherguide.app.jsonHandler.JsonControl;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
-Context mContext;
+
 //set up a public string to communicate which day of the week is current
 public static String _current;
 
@@ -23,6 +22,8 @@ public static String _current;
 //**Want to create this manually using individual strings in strings.xml so that we can cater it to today's day of the week (not predefined array)
 public static String[] _week;
 
+//create an array to contain strings with each day of the week's title as well as their weather conditions for gridview
+public static String[] _allWeather;
 
     //we can use this to determine the day of the week, which is displayed at the top of the interface
     public String getToday() {
@@ -77,9 +78,10 @@ public static String[] _week;
 
 
         //now that we know what today is, get it's weather and set to text view
-        String todaysWeather = JsonControl.readJson(today);
+        String todaysWeather = JsonControl.readJson(today, false);
         TextView weatherView = (TextView) findViewById(R.id.weather_holder);
         weatherView.setText(todaysWeather);
+        getAllWeather();
 
         //create our arrayAdapter for the spinner
 
@@ -94,13 +96,12 @@ public static String[] _week;
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //get the selected day from our array
                 String selected = _week[position];
-                if (selected.equals(_current))
-                {
-                    return;
-                } else {
+                //only update the UI if the user picks a different day
+                if (!(selected.equals(_current))) {
                     _current = selected;
-                   setDay(selected);
+                    setDay(selected);
                 }
             }
 
@@ -109,6 +110,13 @@ public static String[] _week;
 
             }
         });
+
+        //create our gridView and required adapter/logic
+        ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _allWeather);
+
+        GridView gridView = (GridView) findViewById(R.id.weather_grid);
+
+        gridView.setAdapter(gridAdapter);
     }
 
 
@@ -151,9 +159,19 @@ public static String[] _week;
         selectedDay.setText(day);
 
         //update our weather information to the correct day
-        String weather = JsonControl.readJson(day);
+        String weather = JsonControl.readJson(day, false);
         TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
         selectedWeather.setText(weather);
+    }
+
+    //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
+    public void getAllWeather() {
+
+        int currentPosition = java.util.Arrays.asList(_week).indexOf(_current);
+
+        //manually create our allWeather array the hard way since you cannot 'add' items to an array in java
+        _allWeather = new String[]{JsonControl.readJson(_week[currentPosition], true), JsonControl.readJson(_week[currentPosition +1], true), JsonControl.readJson(_week[currentPosition +2], true), JsonControl.readJson(_week[currentPosition +3], true), JsonControl.readJson(_week[currentPosition +4], true), JsonControl.readJson(_week[currentPosition +5], true), JsonControl.readJson(_week[currentPosition +6], true),};
+
     }
 
 

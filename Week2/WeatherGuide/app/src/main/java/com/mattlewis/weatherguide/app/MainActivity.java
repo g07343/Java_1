@@ -113,10 +113,26 @@ public static String[] _allWeather;
 
         //create our gridView and required adapter/logic
         ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _allWeather);
-
+        //get our already created grid view
         GridView gridView = (GridView) findViewById(R.id.weather_grid);
-
+        //set our adapter
         gridView.setAdapter(gridAdapter);
+
+        //create onClick method
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = _week[position];
+                System.out.println("Selected day was:  " + selected);
+                if (!(selected.equals(_current))) {
+                    _current = selected;
+                    setDay(selected);
+                    //also this time we need to keep our spinner in sync as well
+                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                    spinner.setSelection(position, true);
+                }
+            }
+        });
     }
 
 

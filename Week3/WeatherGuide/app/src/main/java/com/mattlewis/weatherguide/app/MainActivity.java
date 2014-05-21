@@ -60,7 +60,7 @@ public static String[] _allWeather;
             default:
                 return "Day not found!";
         }
-        //now that we know what today is, create our dynamic array of 7 days
+
         createWeek(_current);
         return _current;
     }
@@ -71,6 +71,13 @@ public static String[] _allWeather;
         context = this;
 
         Boolean connectionTest = NetworkManager.connectionStatus(context);
+        if (connectionTest == true)
+        {
+            NetworkManager.getData data = new NetworkManager.getData();
+            data.execute(NetworkManager._urlString);
+        } else {
+
+        }
 
         //set our default content view
         setContentView(R.layout.activity_main);

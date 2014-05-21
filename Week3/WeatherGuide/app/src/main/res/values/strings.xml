@@ -5,8 +5,9 @@
 <resources>
 
     <string name="app_name">WeatherGuide</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Day Title</string>
     <string name="action_settings">Settings</string>
+    <string name="refreshBtn_title">Refresh</string>
     <string name="date_label">Today Is:</string>
     <string name="monday_text">Monday</string>
     <string name="tuesday_text">Tuesday</string>

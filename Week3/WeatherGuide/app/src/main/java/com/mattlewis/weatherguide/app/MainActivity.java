@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
+import android.graphics.Color;
 import android.content.Context;
 import com.mattlewis.weatherguide.app.dataHandler.JsonControl;
 import com.mattlewis.weatherguide.app.dataHandler.NetworkManager;
@@ -61,7 +62,7 @@ public static String[] _allWeather;
                 return "Day not found!";
         }
 
-        createWeek(_current);
+
         return _current;
     }
 
@@ -70,84 +71,64 @@ public static String[] _allWeather;
         super.onCreate(savedInstanceState);
         context = this;
 
-        Boolean connectionTest = NetworkManager.connectionStatus(context);
-        if (connectionTest == true)
-        {
-            NetworkManager.getData data = new NetworkManager.getData();
-            data.execute(NetworkManager._urlString);
-        } else {
-
-        }
-
         //set our default content view
         setContentView(R.layout.activity_main);
 
-        //get today's current day of the week as a string
-        String today = getToday();
+        //set our refresh button to be hidden by default
+        final Button refreshButton = (Button) findViewById(R.id.refresh_button);
+        refreshButton.setVisibility(View.GONE);
 
-        //create our JSON object now to pull from
-        JsonControl.createJson();
-        //find our selected day and set the current day as our default (can be changed later)
-        TextView textView = (TextView) findViewById(R.id.selected_day);
-        textView.setText(today);
+        Boolean connectionTest = NetworkManager.connectionStatus(context);
+        if (connectionTest == true)
+        {
+            //begin the process of getting our remote data from API
+            NetworkManager.getData data = new NetworkManager.getData();
+            data.execute();
 
+            //get today's current day of the week as a string
+            String today = getToday();
+            createWeek(_current);
+            setUp(today);
+            //now that we know we have network connectivity, create our dynamic week array
 
-        //now that we know what today is, get it's weather and set to text view
-        String todaysWeather = JsonControl.readJson(today, false);
-        TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-        weatherView.setText(todaysWeather);
-        getAllWeather();
+        } else {
+            final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+            weatherView.setTextColor(Color.RED);
+            weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.");
+            refreshButton.setVisibility(View.VISIBLE);
 
-        //create our arrayAdapter for the spinner
+            //set onClick to basically 'recheck' if we have internet
+            refreshButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Boolean connectionTest = NetworkManager.connectionStatus(context);
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, _week);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    if (connectionTest == true)
+                    {
 
-        //create our spinner for users to pick a day
-        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-        spinner.setAdapter(spinnerAdapter);
+                        refreshButton.setVisibility(View.GONE);
+                        weatherView.setTextColor(Color.BLACK);
+                        //begin the process of getting our remote data from API
+                        //begin the process of getting our remote data from API
+                        NetworkManager.getData data = new NetworkManager.getData();
+                        data.execute();
 
-        //create our onItemSelected method
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //get the selected day from our array
-                String selected = _week[position];
-                //only update the UI if the user picks a different day
-                if (!(selected.equals(_current))) {
-                    _current = selected;
-                    setDay(selected);
+                        //get today's current day of the week as a string
+                        String today = getToday();
+                        //create week array depending on day of the week
+                        createWeek(_current);
+                        //run our full set up function passing the current day
+                        setUp(today);
+                    }
                 }
-            }
+            });
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
 
-        //create our gridView and required adapter/logic
-        ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _allWeather);
-        //get our already created grid view
-        GridView gridView = (GridView) findViewById(R.id.weather_grid);
-        //set our adapter
-        gridView.setAdapter(gridAdapter);
 
-        //create onClick method
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selected = _week[position];
-                System.out.println("Selected day was:  " + selected);
-                if (!(selected.equals(_current))) {
-                    _current = selected;
-                    setDay(selected);
-                    //also this time we need to keep our spinner in sync as well
-                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-                    spinner.setSelection(position, true);
-                }
-            }
-        });
+
+
     }
 
 
@@ -211,6 +192,73 @@ public static String[] _allWeather;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    //this function is for setting up nearly all of the data in the program.  It used to live in the onCreate method, but it got too messy up there
+    public void setUp(String today) {
+        //create our JSON object now to pull from
+        JsonControl.createJson();
+        //find our selected day and set the current day as our default (can be changed later)
+        TextView textView = (TextView) findViewById(R.id.selected_day);
+        textView.setText(today);
+
+
+        //now that we know what today is, get it's weather and set to text view
+        String todaysWeather = JsonControl.readJson(today, false);
+        TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+        weatherView.setText(todaysWeather);
+        getAllWeather();
+
+        //create our arrayAdapter for the spinner
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, _week);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        //create our spinner for users to pick a day
+        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+        spinner.setAdapter(spinnerAdapter);
+
+        //create our onItemSelected method
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //get the selected day from our array
+                String selected = _week[position];
+                //only update the UI if the user picks a different day
+                if (!(selected.equals(_current))) {
+                    _current = selected;
+                    setDay(selected);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //create our gridView and required adapter/logic
+        ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _allWeather);
+        //get our already created grid view
+        GridView gridView = (GridView) findViewById(R.id.weather_grid);
+        //set our adapter
+        gridView.setAdapter(gridAdapter);
+
+        //create onClick method
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = _week[position];
+                System.out.println("Selected day was:  " + selected);
+                if (!(selected.equals(_current))) {
+                    _current = selected;
+                    setDay(selected);
+                    //also this time we need to keep our spinner in sync as well
+                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                    spinner.setSelection(position, true);
+                }
+            }
+        });
     }
 }
 

@@ -4,11 +4,18 @@
 
 package com.mattlewis.weatherguide.app.dataHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Log;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 //this class will be in charge of building a json object and reading it.
 public class JsonControl {
+
+    //create a JSON Array object to be set to NetworkManager's received data
+    public static JSONObject weatherArray;
 
     public static JSONObject createJson(){
         //create a base JSON object to hold individual objects for days of the week
@@ -16,6 +23,9 @@ public class JsonControl {
 
         //create an inner object to hold each day of the week object
         JSONObject weekDays = new JSONObject();
+
+
+
 
         for (int i = 1; i <= 7; i++)
         {
@@ -123,5 +133,23 @@ public class JsonControl {
         }
 
         return requested;
+    }
+
+    //this function basically just prints out our object for debugging
+    public static void reportJSON() {
+
+        System.out.println("JSON OBJECT:  " + weatherArray);
+    }
+
+    //this function gets called when the async task is finished from the NetworkManager class, which passes the returned string
+    public static void createJSON(String returned) {
+        try {
+            //create our json object from the passed string
+            weatherArray = new JSONObject(returned);
+            reportJSON();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SOUNDOFF", "STRING", e);
+        }
     }
 }

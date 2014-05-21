@@ -21,4 +21,7 @@
     <item
         type="id"
         name="weather_grid"/>
+    <item
+        type="id"
+        name="refresh_button"/>
 </resources>

@@ -9,7 +9,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import org.json.JSONObject;
+import android.widget.TextView;
+
+import com.mattlewis.weatherguide.app.MainActivity;
+import com.mattlewis.weatherguide.app.R;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,14 +20,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+
 //This class is solely to retrieve our remote data from the API and pass it to the JsonControl class for manipulation
 public class NetworkManager {
 
+    public static Boolean doneLoading = false;
+
     static String TAG = "NETWORK DATA - NETWORKMANAGER";
-    static JSONObject returnedJSON;
+
+    public static String day;
 
     public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/63104.json";
-    public static String _rawData;
 
     public static Boolean connectionStatus(Context context) {
         //create initial boolean to set true/false depending on network conditions
@@ -72,7 +78,7 @@ public class NetworkManager {
 
         @Override
         protected String doInBackground(String... params) {
-            String responseString = "";
+            String responseString;
             try {
                 URL url = new URL(_urlString);
                 responseString = getResponse(url);
@@ -88,7 +94,13 @@ public class NetworkManager {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            MainActivity ma = new MainActivity();
+            doneLoading = true;
 
+
+
+            //ma.getAllWeather();
+            //ma.setUp(day);
         }
     }
 }

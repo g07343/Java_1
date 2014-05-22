@@ -6,10 +6,13 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import android.graphics.Color;
 import android.content.Context;
@@ -22,6 +25,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -39,10 +47,25 @@ public static String[] _week;
 //create an array to contain strings with each day of the week's title as well as their weather conditions for gridview
 public static String[] _allWeather;
 
+//create another array to contain only the data we want for the main weather display
+public static String[] _formattedWeather;
+
 public static JSONArray _weatherJSON;
+
+static String TAG = "NETWORK DATA - MainActivity";
 
 //global public date for use when saving data
 public static String date;
+
+//global public string for our day (so when our async task is done we can use it to do setup)
+public String today;
+
+public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/63104.json";
+
+public static Boolean doneLoading = false;
+
+
+
 
     //we can use this to determine the day of the week, which is displayed at the top of the interface
     public String getToday() {
@@ -91,6 +114,10 @@ public static String date;
         super.onCreate(savedInstanceState);
         context = this;
 
+
+
+
+
         //set our default content view
         setContentView(R.layout.activity_main);
 
@@ -98,11 +125,11 @@ public static String date;
         final Button refreshButton = (Button) findViewById(R.id.refresh_button);
         refreshButton.setVisibility(View.GONE);
 
-        Boolean connectionTest = NetworkManager.connectionStatus(context);
-        if (connectionTest == true)
+        Boolean connectionTest = connectionStatus();
+        if (connectionTest)
         {
             //get today's current day of the week as a string
-            String today = getToday();
+            today = getToday();
             createWeek(_current);
 
 
@@ -117,14 +144,16 @@ public static String date;
                     if (savedDate.equals(date))
                     {
                         System.out.println("Today's date is the same as the saved one!");
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                doneLoading = true;
+                getAllWeather();
+                setUp(today);
             } else {
                 //begin the process of getting our remote data from API, since no saved data is found
-                NetworkManager.getData data = new NetworkManager.getData();
+                MainActivity.getData data = new getData();
                 data.execute();
             }
             setUp(today);
@@ -139,9 +168,9 @@ public static String date;
             refreshButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Boolean connectionTest = NetworkManager.connectionStatus(context);
+                    Boolean connectionTest = connectionStatus();
 
-                    if (connectionTest == true)
+                    if (connectionTest)
                     {
 
                         refreshButton.setVisibility(View.GONE);
@@ -161,12 +190,6 @@ public static String date;
                 }
             });
         }
-
-
-
-
-
-
     }
 
 
@@ -202,7 +225,7 @@ public static String date;
     public void setDay(String day, int position) {
         //set our label to something that makes more sense
         TextView dayLabel = (TextView) findViewById(R.id.selected_label);
-
+        dayLabel.setText("Selected day is:");
         //set our newly selected day
         TextView selectedDay = (TextView) findViewById(R.id.selected_day);
         selectedDay.setText(day);
@@ -217,27 +240,28 @@ public static String date;
     //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
     public void getAllWeather() {
 
-        int currentPosition = java.util.Arrays.asList(_week).indexOf(_current);
-
-        //manually create our allWeather array the hard way since you cannot 'add' items to an array in java
-        //_allWeather = new String[]{JsonControl.readJson(_week[currentPosition], true), JsonControl.readJson(_week[currentPosition +1], true), JsonControl.readJson(_week[currentPosition +2], true), JsonControl.readJson(_week[currentPosition +3], true), JsonControl.readJson(_week[currentPosition +4], true), JsonControl.readJson(_week[currentPosition +5], true), JsonControl.readJson(_week[currentPosition +6], true),};
-
         //create our day strings manually using yet another for loop/switch statement combo
         String one = "", two = "", three = "", four = "", five = "", six = "", seven = "";
+        String uOne = "", uTwo = "", uThree = "", uFour = "", uFive = "", uSix = "", uSeven = "";
         StringBuilder builder = new StringBuilder();
 
-
+        _weatherJSON =  FileManager.ReadData(context);
 
         //create a resusable JSONObject to be overwritten for each string
         JSONObject day;
         for (int i=0; i<7; i++)
-        {
+        {   //absolutely need to manually set the length of each string as this determines the rowheight for the items in grid view.  Different string lengths
+            //result in different heights for each grid view item, which causes crazy errors.
             try {
                 switch (i) {
                     case 0:
+                        //for each, assign/reassign our JSONObject to a single new day object
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        //use our builder to capture each
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uOne = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -248,8 +272,10 @@ public static String date;
                         break;
                     case 1:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uTwo = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -260,8 +286,10 @@ public static String date;
                         break;
                     case 2:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uThree = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -272,8 +300,10 @@ public static String date;
                         break;
                     case 3:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uFour = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -284,8 +314,10 @@ public static String date;
                         break;
                     case 4:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uFive = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -296,8 +328,10 @@ public static String date;
                         break;
                     case 5:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uSix = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -308,8 +342,10 @@ public static String date;
                         break;
                     case 6:
                         day = _weatherJSON.getJSONObject(i);
-                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
-                        System.out.println("Builder's length was:  " + builder.length());
+                        builder.append("\r\n").append(day.getString("weather")).append("\r\n");
+                        uSeven = builder.toString();
+                        builder.setLength(0);
+                        builder.append(day.getString("weekday")).append("\r\n").append("\r\n").append(day.getString("weather")).append("\r\n");
                         if (builder.length() > 50)
                         {
                             builder.setLength(50);
@@ -325,7 +361,8 @@ public static String date;
                 e.printStackTrace();
             }
         }
-        _allWeather = new String[]{one, two, three, four, five, six, seven};
+        _allWeather = new String[]{uOne, uTwo, uThree, uFour, uFive, uSix, uSeven};
+        _formattedWeather = new String[]{one, two, three, four, five, six, seven};
     }
 
 
@@ -338,72 +375,231 @@ public static String date;
 
     //this function is for setting up nearly all of the data in the program.  It used to live in the onCreate method, but it got too messy up there
     public void setUp(String today) {
-        //create our JSON object now to pull from
-        JsonControl.createJson();
-        //find our selected day and set the current day as our default (can be changed later)
-        TextView textView = (TextView) findViewById(R.id.selected_day);
-        textView.setText(today);
+        if (!doneLoading)
+        {
+            System.out.println("BOOLEAN WAS FALSE...");
 
 
-        //now that we know what today is, get it's weather and set to text view
-        getAllWeather();
-        String todaysWeather = _allWeather[0];;
-        TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-        weatherView.setText(todaysWeather);
+            //find our selected day and set the current day as our default (can be changed later)
+            TextView textView = (TextView) findViewById(R.id.selected_day);
+            textView.setText(today);
 
 
-        //create our arrayAdapter for the spinner
+            //now that we know what today is, get it's weather and set to text view
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, _week);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            String todaysWeather = "Loading...";
+            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+            weatherView.setText(todaysWeather);
 
-        //create our spinner for users to pick a day
-        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-        spinner.setAdapter(spinnerAdapter);
 
-        //create our onItemSelected method
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //get the selected day from our array
-                String selected = _week[position];
-                //only update the UI if the user picks a different day
-                if (!(selected.equals(_current))) {
-                    _current = selected;
-                    setDay(selected, position);
+            //create our arrayAdapter for the spinner
+            String[] loadingArray = new String[]{"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading,"};
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, loadingArray);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            //create our spinner for users to pick a day
+            Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+            spinner.setAdapter(spinnerAdapter);
+
+
+            //create our gridView and required adapter/logic
+            ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, loadingArray);
+            //get our already created grid view
+            GridView gridView = (GridView) findViewById(R.id.weather_grid);
+            //set our adapter
+            gridView.setAdapter(gridAdapter);
+
+        } else {
+            System.out.println("BOOLEAN WAS TRUE...");
+            //find our selected day and set the current day as our default (can be changed later)
+            TextView textView = (TextView) findViewById(R.id.selected_day);
+
+            textView.setText(today);
+
+
+            //now that we know what today is, get it's weather and set to text view
+
+            String todaysWeather = _allWeather[0];
+            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+            weatherView.setText(todaysWeather);
+
+
+            //create our arrayAdapter for the spinner
+
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, _week);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            //create our spinner for users to pick a day
+            Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+            spinner.setAdapter(spinnerAdapter);
+
+            //create our onItemSelected method
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //get the selected day from our array
+                    String selected = _week[position];
+                    //only update the UI if the user picks a different day
+                    if (!(selected.equals(_current))) {
+                        _current = selected;
+                        setDay(selected, position);
+                    }
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
-
-        //create our gridView and required adapter/logic
-        ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _allWeather);
-        //get our already created grid view
-        GridView gridView = (GridView) findViewById(R.id.weather_grid);
-        //set our adapter
-        gridView.setAdapter(gridAdapter);
-
-
-
-        //create onClick method
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selected = _week[position];
-                System.out.println("Selected day was:  " + selected);
-                if (!(selected.equals(_current))) {
-                    _current = selected;
-                    setDay(selected, position);
-                    //also this time we need to keep our spinner in sync as well
-                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-                    spinner.setSelection(position, true);
                 }
+            });
+
+            //create our gridView and required adapter/logic
+            ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, _formattedWeather);
+            //get our already created grid view
+            GridView gridView = (GridView) findViewById(R.id.weather_grid);
+            //set our adapter
+            gridView.setAdapter(gridAdapter);
+
+
+
+            //create onClick method
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selected = _week[position];
+                    System.out.println("Selected day was:  " + selected);
+                    if (!(selected.equals(_current))) {
+                        _current = selected;
+                        setDay(selected, position);
+                        //also this time we need to keep our spinner in sync as well
+                        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                        spinner.setSelection(position, true);
+                    }
+                }
+            });
+        }
+    }
+
+    public static Boolean connectionStatus() {
+        //create initial boolean to set true/false depending on network conditions
+        Boolean connected = false;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        //check to make sure we have a valid object
+        if (networkInfo != null)
+        {   //check the result to make sure it is actually connected and set boolean to true if so
+            if (networkInfo.isConnected())
+            {
+                Log.i(TAG, "Connection type:  " + networkInfo.getTypeName());
+                connected = true;
             }
-        });
+        }
+        return connected;
+    }
+
+    public static String getResponse(URL url) {
+        String response;
+        try {
+            URLConnection connection = url.openConnection();
+            BufferedInputStream buffer = new BufferedInputStream(connection.getInputStream());
+            byte[] contextByte = new byte[1024];
+            int byteRead;
+            StringBuilder responseBuffer = new StringBuilder();
+
+            while((byteRead = buffer.read(contextByte)) != -1)
+            {
+                response = new String(contextByte, 0, byteRead);
+                responseBuffer.append(response);
+            }
+            response = responseBuffer.toString();
+            JsonControl.createJSON(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response = "Error retrieving remote data";
+            System.out.println(response);
+        }
+        return response;
+    }
+
+    public class getData extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String responseString;
+            try {
+                URL url = new URL(_urlString);
+                responseString = getResponse(url);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                responseString = "Error within the getData function!";
+                System.out.println(responseString);
+            }
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            getAllWeather();
+            doneLoading = true;
+
+            System.out.println("BOOLEAN WAS TRUE...");
+            //find our selected day and set the current day as our default (can be changed later)
+            TextView textView = (TextView) findViewById(R.id.selected_day);
+            textView.setText(today);
+
+            String todaysWeather = _allWeather[0];
+            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+            weatherView.setText(todaysWeather);
+
+            //create our spinner for users to pick a day
+            Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, _week);
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerAdapter);
+
+            //create our onItemSelected method
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //get the selected day from our array
+                    String selected = _week[position];
+                    //only update the UI if the user picks a different day
+                    if (!(selected.equals(_current))) {
+                        _current = selected;
+                        setDay(selected, position);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            ArrayAdapter<String> gridAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, _formattedWeather);
+            GridView gridView = (GridView) findViewById(R.id.weather_grid);
+            //set our adapter
+            gridView.setAdapter(gridAdapter);
+
+
+
+            //create onClick method
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selected = _week[position];
+                    System.out.println("Selected day was:  " + selected);
+                    if (!(selected.equals(_current))) {
+                        _current = selected;
+                        setDay(selected, position);
+                        //also this time we need to keep our spinner in sync as well
+                        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                        spinner.setSelection(position, true);
+                    }
+                }
+            });
+        }
     }
 }
 

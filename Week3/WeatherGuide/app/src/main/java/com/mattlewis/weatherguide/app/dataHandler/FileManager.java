@@ -9,14 +9,10 @@ import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 
 public class FileManager {
@@ -44,7 +40,7 @@ public class FileManager {
     }
 
     static public JSONArray ReadData(Context context) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         JSONArray savedArray;
         try {
             FileInputStream fis = context.openFileInput("weather");
@@ -52,7 +48,7 @@ public class FileManager {
             while (bis.available() != 0)
             {
                 char c = (char) bis.read();
-                buffer.append(c);
+                builder.append(c);
             }
             bis.close();
             fis.close();
@@ -60,10 +56,10 @@ public class FileManager {
             e.printStackTrace();
         }
         //if we didn't find a file, the stringbuffer will contain 'null'
-        if (buffer.length() != 4)
+        if (builder.length() != 4)
         {
             try {
-                savedArray = new JSONArray(buffer.toString());
+                savedArray = new JSONArray(builder.toString());
                 System.out.println("FILE FOUND/SET");
                 return savedArray;
             } catch (JSONException e) {

@@ -6,6 +6,9 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -16,15 +19,13 @@ import android.view.View;
 import android.widget.*;
 import android.graphics.Color;
 import android.content.Context;
-
 import com.mattlewis.weatherguide.app.dataHandler.FileManager;
 import com.mattlewis.weatherguide.app.dataHandler.JsonControl;
-import com.mattlewis.weatherguide.app.dataHandler.NetworkManager;
+import com.mattlewis.weatherguide.app.dataHandler.LocationHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,7 +34,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
 public static Context context;
 
@@ -63,9 +64,6 @@ public String today;
 public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/63104.json";
 
 public static Boolean doneLoading = false;
-
-
-
 
     //we can use this to determine the day of the week, which is displayed at the top of the interface
     public String getToday() {
@@ -115,7 +113,7 @@ public static Boolean doneLoading = false;
         context = this;
 
 
-
+        LocationHandler.getZip(context);
 
 
         //set our default content view
@@ -177,7 +175,7 @@ public static Boolean doneLoading = false;
                         weatherView.setTextColor(Color.BLACK);
                         //begin the process of getting our remote data from API
                         //begin the process of getting our remote data from API
-                        NetworkManager.getData data = new NetworkManager.getData();
+                        MainActivity.getData data = new getData();
                         data.execute();
 
                         //get today's current day of the week as a string

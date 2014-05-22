@@ -1,3 +1,7 @@
+//Matthew Lewis
+//Term 1405
+//Week 3-4 NetworkManager class
+
 package com.mattlewis.weatherguide.app.dataHandler;
 
 import android.content.Context;
@@ -5,9 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -16,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-
+//This class is solely to retrieve our remote data from the API and pass it to the JsonControl class for manipulation
 public class NetworkManager {
 
     static String TAG = "NETWORK DATA - NETWORKMANAGER";

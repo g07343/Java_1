@@ -12,9 +12,16 @@ import android.view.View;
 import android.widget.*;
 import android.graphics.Color;
 import android.content.Context;
+
+import com.mattlewis.weatherguide.app.dataHandler.FileManager;
 import com.mattlewis.weatherguide.app.dataHandler.JsonControl;
 import com.mattlewis.weatherguide.app.dataHandler.NetworkManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
@@ -31,10 +38,22 @@ public static String[] _week;
 //create an array to contain strings with each day of the week's title as well as their weather conditions for gridview
 public static String[] _allWeather;
 
+public static JSONArray _weatherJSON;
+
+//global public date for use when saving data
+public static String date;
+
     //we can use this to determine the day of the week, which is displayed at the top of the interface
     public String getToday() {
         Calendar calendar = Calendar.getInstance();
         int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+        //need to get current date using formatter so we can ensure we aren't using old data (in case a user uses the app only on tuesdays or something)
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM-dd-yyyy");
+
+        //set our global date to reference against save data, and to supply a date to save as well
+        date = dateFormatter.format(calendar.getTime());
+
+
         //depending on the day int value, set the current day String
         switch (currentDay){
             case 1:
@@ -81,15 +100,33 @@ public static String[] _allWeather;
         Boolean connectionTest = NetworkManager.connectionStatus(context);
         if (connectionTest == true)
         {
-            //begin the process of getting our remote data from API
-            NetworkManager.getData data = new NetworkManager.getData();
-            data.execute();
-
             //get today's current day of the week as a string
             String today = getToday();
             createWeek(_current);
+
+
+
+            //create our JSONArray from saved data and check if it's null (which tells us if there IS any saved data)
+            _weatherJSON =  FileManager.ReadData(context);
+            if (_weatherJSON != null)
+            {
+                try {
+                    //get the saved day from the device to compare
+                    String savedDate = (String) _weatherJSON.get(7);
+                    if (savedDate.equals(date))
+                    {
+                        System.out.println("Today's date is the same as the saved one!");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                //begin the process of getting our remote data from API, since no saved data is found
+                NetworkManager.getData data = new NetworkManager.getData();
+                data.execute();
+            }
             setUp(today);
-            //now that we know we have network connectivity, create our dynamic week array
 
         } else {
             final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
@@ -184,6 +221,44 @@ public static String[] _allWeather;
         //manually create our allWeather array the hard way since you cannot 'add' items to an array in java
         _allWeather = new String[]{JsonControl.readJson(_week[currentPosition], true), JsonControl.readJson(_week[currentPosition +1], true), JsonControl.readJson(_week[currentPosition +2], true), JsonControl.readJson(_week[currentPosition +3], true), JsonControl.readJson(_week[currentPosition +4], true), JsonControl.readJson(_week[currentPosition +5], true), JsonControl.readJson(_week[currentPosition +6], true),};
 
+        //create our day strings manually using yet another for loop/switch statement combo
+        String one, two, three, four, five, six, seven;
+
+        //create a resusable JSONObject to be overwritten for each string
+        JSONObject day;
+        for (int i=0; i<7; i++)
+        {
+            try {
+                switch (i) {
+                    case 0:
+                        day = _weatherJSON.getJSONObject(i);
+                        one = day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather");
+                        break;
+                    case 1:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    case 2:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    case 3:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    case 4:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    case 5:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    case 6:
+                        day = _weatherJSON.getJSONObject(i);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

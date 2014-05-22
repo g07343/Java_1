@@ -10,11 +10,15 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
 
 public class LocationHandler {
+
+    //debugging tag
+    static String TAG = "LOCATION - LocationHandler";
 
     //use two double variables to hold our latitude and longitude
     public static Double latitude;
@@ -88,6 +92,7 @@ public class LocationHandler {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
             //stop tracking location, since we either do or don't have what we need (Don't want to have it keep checking constantly)
             locationManager.removeUpdates(locationListener);

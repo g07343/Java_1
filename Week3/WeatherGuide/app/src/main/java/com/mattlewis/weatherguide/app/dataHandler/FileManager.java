@@ -13,9 +13,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.content.Context;
+import android.util.Log;
 
 
 public class FileManager {
+
+    //create a tag for debugging
+    static String TAG = "FILEMANAGMENT - FileManager";
 
     //this method is responsible for saving data to the device
     static public void SaveData(JSONArray data, Context context) {
@@ -32,11 +36,11 @@ public class FileManager {
                 System.out.println("File written successfully!");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Error writing data");
+                Log.e(TAG, e.toString());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println("Error in outer try/catch");
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -56,6 +60,7 @@ public class FileManager {
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
         //if we didn't find a file, the stringbuffer will contain 'null'
         if (builder.length() != 4)
@@ -66,7 +71,7 @@ public class FileManager {
                 return savedArray;
             } catch (JSONException e) {
                 e.printStackTrace();
-                System.out.println("FILE NOT FOUND");
+                Log.e(TAG, e.toString());
             }
         }
         return null;

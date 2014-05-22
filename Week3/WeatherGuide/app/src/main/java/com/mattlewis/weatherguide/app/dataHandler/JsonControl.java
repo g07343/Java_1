@@ -13,6 +13,9 @@ import com.mattlewis.weatherguide.app.MainActivity;
 //this class will be in charge of building a json object and reading it.
 public class JsonControl {
 
+    //create our debugging tag
+    static String TAG = "JSONMANAGEMENT - JsonControl";
+
     //create a JSON Array object to be set to NetworkManager's received data
     public static JSONArray weatherArray;
 
@@ -39,7 +42,7 @@ public class JsonControl {
             buildDays(weatherArray);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("SOUNDOFF", "STRING", e);
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -106,6 +109,7 @@ public class JsonControl {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
         }
         //we also need to put in the current date to make sure we aren't using old data everytime the app loads
@@ -113,6 +117,7 @@ public class JsonControl {
             formattedWeather.put(7, MainActivity.date);
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
 
         //now that we have our finalized data for display, pass it to the FileManager class for saving

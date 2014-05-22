@@ -117,6 +117,7 @@ public static Boolean doneLoading = false;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.e(TAG, e.toString());
                     }
                     doneLoading = true;
                     getAllWeather();
@@ -134,13 +135,13 @@ public static Boolean doneLoading = false;
                     //get the saved day from the device to compare
                     String savedDate = (String) _weatherJSON.get(7);
                     if (savedDate.equals(date)) {
-                        System.out.println("Today's date is the same as the saved one!");
                         String dateLabelText = "Weather data current as of: " + savedDate;
                         TextView dateLabel = (TextView) findViewById(R.id.time_label);
                         dateLabel.setText(dateLabelText);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e(TAG, e.toString());
                 }
                 doneLoading = true;
                 getAllWeather();
@@ -233,7 +234,6 @@ public static Boolean doneLoading = false;
         String weather = _allWeather[position];
         TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
         selectedWeather.setText(weather);
-        System.out.println("Weather displayed should be:  " + selectedWeather.getText());
     }
 
     //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
@@ -358,6 +358,7 @@ public static Boolean doneLoading = false;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
         }
         _allWeather = new String[]{uOne, uTwo, uThree, uFour, uFive, uSix, uSeven};
@@ -376,9 +377,6 @@ public static Boolean doneLoading = false;
     public void setUp(String today) {
         if (!doneLoading)
         {
-            System.out.println("BOOLEAN WAS FALSE...");
-
-
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
             textView.setText(today);
@@ -409,7 +407,6 @@ public static Boolean doneLoading = false;
             gridView.setAdapter(gridAdapter);
 
         } else {
-            System.out.println("BOOLEAN WAS TRUE...");
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
 
@@ -465,7 +462,6 @@ public static Boolean doneLoading = false;
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String selected = _week[position];
-                    System.out.println("Selected day was:  " + selected);
                     if (!(selected.equals(_current))) {
                         _current = selected;
                         setDay(selected, position);
@@ -525,7 +521,7 @@ public static Boolean doneLoading = false;
         } catch (IOException e) {
             e.printStackTrace();
             response = "Error retrieving remote data";
-            System.out.println(response);
+            Log.e(TAG, e.toString());
         }
         return response;
     }
@@ -584,7 +580,7 @@ public static Boolean doneLoading = false;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 responseString = "Error within the getData function!";
-                System.out.println(responseString);
+                Log.e(TAG, e.toString());
             }
             return responseString;
         }
@@ -658,6 +654,7 @@ public static Boolean doneLoading = false;
                 dateLabel.setText(dateLabelText);
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e(TAG, e.toString());
             }
         }
     }

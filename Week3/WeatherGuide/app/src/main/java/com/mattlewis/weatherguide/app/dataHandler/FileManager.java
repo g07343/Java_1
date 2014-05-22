@@ -24,6 +24,7 @@ public class FileManager {
         String serializedData = data.toString();
 
         try {
+            //save our json out as a generic 'weather' file
             FileOutputStream fos = context.openFileOutput("weather", Context.MODE_PRIVATE);
             try {
                 fos.write(serializedData.getBytes());
@@ -39,6 +40,7 @@ public class FileManager {
         }
     }
 
+    //this function reads our data in the event MainActivity can't detect internet or location
     static public JSONArray ReadData(Context context) {
         StringBuilder builder = new StringBuilder();
         JSONArray savedArray;

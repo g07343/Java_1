@@ -15,14 +15,17 @@ import java.io.IOException;
 import java.util.List;
 
 public class LocationHandler {
+
     //use two double variables to hold our latitude and longitude
     public static Double latitude;
     public static Double longitude;
 
     //this function will attempt to get the user's location determined by location service
     public static String getZip(Context context) {
+
         //set up string to hold postalCode
         String postalCode;
+
         //get an instance of location manager
         final android.location.LocationManager locationManager = (android.location.LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 

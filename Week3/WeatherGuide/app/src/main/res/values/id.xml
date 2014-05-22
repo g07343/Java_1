@@ -24,4 +24,7 @@
     <item
         type="id"
         name="refresh_button"/>
+    <item
+        type="id"
+        name="time_label"/>
 </resources>

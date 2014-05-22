@@ -20,11 +20,9 @@ public class JsonControl {
     public static JSONArray formattedWeather;
 
 
-    //this function gets called when the async task is finished from the NetworkManager class, which passes the returned string
+    //this function gets called when the async task is finished from MainActivity class, which passes the returned string
     public static void createJSON(String returned) {
         try {
-
-
             //create our json object from the passed string
             JSONObject days = new JSONObject(returned);
 

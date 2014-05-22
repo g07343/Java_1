@@ -6,9 +6,6 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -22,7 +19,6 @@ import android.content.Context;
 import com.mattlewis.weatherguide.app.dataHandler.FileManager;
 import com.mattlewis.weatherguide.app.dataHandler.JsonControl;
 import com.mattlewis.weatherguide.app.dataHandler.LocationHandler;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,9 +57,100 @@ public static String date;
 //global public string for our day (so when our async task is done we can use it to do setup)
 public String today;
 
-public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/63104.json";
+public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/";
 
 public static Boolean doneLoading = false;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = this;
+
+        //set our default content view
+        setContentView(R.layout.activity_main);
+
+        //set our refresh button to be hidden by default
+        final Button refreshButton = (Button) findViewById(R.id.refresh_button);
+        refreshButton.setVisibility(View.GONE);
+
+        //get today's current day of the week as a string
+        today = getToday();
+        createWeek(_current);
+
+        Boolean connectionTest = connectionStatus();
+        if (connectionTest)
+        {
+            //now that we have a connection, check if we can get a location for latest data
+            String zip = LocationHandler.getZip(context);
+
+            if (zip != null)
+            {//found location, pass to getData function and build interface with newest data
+
+                //build our dynamic url
+                buildUrl(zip);
+
+                //begin the process of getting latest remote data from API
+                MainActivity.getData data = new getData();
+                data.execute();
+
+                //get today's current day of the week as a string
+                String today = getToday();
+                //create week array depending on day of the week
+                createWeek(_current);
+                //run our full set up function passing the current day
+                setUp(today);
+
+            } else {
+                //no location, check for local storage and load if possible
+                _weatherJSON =  FileManager.ReadData(context);
+                if (_weatherJSON != null)
+                {//stored data found, load this instead and let user know the day it was retrieved
+                    try {
+                        //get the saved day from the device to compare
+                        String savedDate = (String) _weatherJSON.get(7);
+                        if (savedDate.equals(date))
+                        {
+                            String dateLabelText = "Weather data current as of: " + savedDate;
+                            TextView dateLabel = (TextView) findViewById(R.id.time_label);
+                            dateLabel.setText(dateLabelText);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    doneLoading = true;
+                    getAllWeather();
+                    setUp(today);
+                } else {
+                    //no local storage, panic time!  Alert user they need internet!
+                    panicTime();
+                }
+            }
+        } else {
+            //no internet connection found, so check local data
+            _weatherJSON =  FileManager.ReadData(context);
+            if (_weatherJSON != null) {//stored data found, load this instead and let user know the day it was retrieved
+                try {
+                    //get the saved day from the device to compare
+                    String savedDate = (String) _weatherJSON.get(7);
+                    if (savedDate.equals(date)) {
+                        System.out.println("Today's date is the same as the saved one!");
+                        String dateLabelText = "Weather data current as of: " + savedDate;
+                        TextView dateLabel = (TextView) findViewById(R.id.time_label);
+                        dateLabel.setText(dateLabelText);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                doneLoading = true;
+                getAllWeather();
+                setUp(today);
+            } else {
+                //no local storage either alert user (panic time!)
+                panicTime();
+            }
+        }
+    }
 
     //we can use this to determine the day of the week, which is displayed at the top of the interface
     public String getToday() {
@@ -102,94 +189,8 @@ public static Boolean doneLoading = false;
             default:
                 return "Day not found!";
         }
-
-
         return _current;
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = this;
-
-
-        LocationHandler.getZip(context);
-
-
-        //set our default content view
-        setContentView(R.layout.activity_main);
-
-        //set our refresh button to be hidden by default
-        final Button refreshButton = (Button) findViewById(R.id.refresh_button);
-        refreshButton.setVisibility(View.GONE);
-
-        Boolean connectionTest = connectionStatus();
-        if (connectionTest)
-        {
-            //get today's current day of the week as a string
-            today = getToday();
-            createWeek(_current);
-
-
-
-            //create our JSONArray from saved data and check if it's null (which tells us if there IS any saved data)
-            _weatherJSON =  FileManager.ReadData(context);
-            if (_weatherJSON != null)
-            {
-                try {
-                    //get the saved day from the device to compare
-                    String savedDate = (String) _weatherJSON.get(7);
-                    if (savedDate.equals(date))
-                    {
-                        System.out.println("Today's date is the same as the saved one!");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                doneLoading = true;
-                getAllWeather();
-                setUp(today);
-            } else {
-                //begin the process of getting our remote data from API, since no saved data is found
-                MainActivity.getData data = new getData();
-                data.execute();
-            }
-            setUp(today);
-
-        } else {
-            final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-            weatherView.setTextColor(Color.RED);
-            weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.");
-            refreshButton.setVisibility(View.VISIBLE);
-
-            //set onClick to basically 'recheck' if we have internet
-            refreshButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Boolean connectionTest = connectionStatus();
-
-                    if (connectionTest)
-                    {
-
-                        refreshButton.setVisibility(View.GONE);
-                        weatherView.setTextColor(Color.BLACK);
-                        //begin the process of getting our remote data from API
-                        //begin the process of getting our remote data from API
-                        MainActivity.getData data = new getData();
-                        data.execute();
-
-                        //get today's current day of the week as a string
-                        String today = getToday();
-                        //create week array depending on day of the week
-                        createWeek(_current);
-                        //run our full set up function passing the current day
-                        setUp(today);
-                    }
-                }
-            });
-        }
-    }
-
 
     //this method simply creates our dynamic 7 day week array
     private void createWeek(String today) {
@@ -477,6 +478,17 @@ public static Boolean doneLoading = false;
         }
     }
 
+    //this function builds out our url string and passes it to the getData function
+    public static void buildUrl(String zip) {
+        StringBuilder urlBuilder = new StringBuilder();
+        String json = ".json";
+        urlBuilder.append(_urlString).append(zip).append(json);
+        String completedURL = urlBuilder.toString();
+        urlBuilder.setLength(0);
+        //finally, overwrite our global url which is used to get remote data
+        _urlString = completedURL;
+    }
+
     public static Boolean connectionStatus() {
         //create initial boolean to set true/false depending on network conditions
         Boolean connected = false;
@@ -516,6 +528,48 @@ public static Boolean doneLoading = false;
             System.out.println(response);
         }
         return response;
+    }
+
+    //this function just serves to remove a decent chunk of logic from the onCreate's various if/else statements
+    public void panicTime() {
+        final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+        final Button refreshButton = (Button) findViewById(R.id.refresh_button);
+        weatherView.setTextColor(Color.RED);
+        weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.");
+        refreshButton.setVisibility(View.VISIBLE);
+
+        //set onClick to basically 'recheck' if we have internet
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean connectionTest = connectionStatus();
+                String postalCode = LocationHandler.getZip(context);
+                if (connectionTest)
+                {
+                    if (postalCode != null)
+                    {
+                        //since we have both internet AND a valid zip code, build url and get data
+                        buildUrl(postalCode);
+                        refreshButton.setVisibility(View.GONE);
+                        weatherView.setTextColor(Color.BLACK);
+
+                        //begin the process of getting our remote data from API
+                        MainActivity.getData data = new getData();
+                        data.execute();
+
+                        //get today's current day of the week as a string
+                        String today = getToday();
+                        //create week array depending on day of the week
+                        createWeek(_current);
+                        //run our full set up function passing the current day
+                        setUp(today);
+                    } else {
+                        //allow the user to put in their own postal code
+                        weatherView.setText("Location is turned off.  Please re-enable to get weather.");
+                    }
+                }
+            }
+        });
     }
 
     public class getData extends AsyncTask<String, Void, String> {
@@ -597,6 +651,14 @@ public static Boolean doneLoading = false;
                     }
                 }
             });
+            try {
+                String saveDate = (String) _weatherJSON.get(7);
+                String dateLabelText = "Weather data current as of: " + saveDate;
+                TextView dateLabel = (TextView) findViewById(R.id.time_label);
+                dateLabel.setText(dateLabelText);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

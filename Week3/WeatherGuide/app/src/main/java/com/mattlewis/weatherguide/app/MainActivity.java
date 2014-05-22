@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import android.graphics.Color;
 import android.content.Context;
@@ -198,19 +199,19 @@ public static String date;
     }
 
     //this function gets called whenever the user selects a new day from the spinner.  Updates the UI accordingly
-    public void setDay(String day) {
+    public void setDay(String day, int position) {
         //set our label to something that makes more sense
         TextView dayLabel = (TextView) findViewById(R.id.selected_label);
-        dayLabel.setText("Selected day is:");
 
         //set our newly selected day
         TextView selectedDay = (TextView) findViewById(R.id.selected_day);
         selectedDay.setText(day);
 
         //update our weather information to the correct day
-        String weather = JsonControl.readJson(day, false);
+        String weather = _allWeather[position];
         TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
         selectedWeather.setText(weather);
+        System.out.println("Weather displayed should be:  " + selectedWeather.getText());
     }
 
     //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
@@ -219,10 +220,13 @@ public static String date;
         int currentPosition = java.util.Arrays.asList(_week).indexOf(_current);
 
         //manually create our allWeather array the hard way since you cannot 'add' items to an array in java
-        _allWeather = new String[]{JsonControl.readJson(_week[currentPosition], true), JsonControl.readJson(_week[currentPosition +1], true), JsonControl.readJson(_week[currentPosition +2], true), JsonControl.readJson(_week[currentPosition +3], true), JsonControl.readJson(_week[currentPosition +4], true), JsonControl.readJson(_week[currentPosition +5], true), JsonControl.readJson(_week[currentPosition +6], true),};
+        //_allWeather = new String[]{JsonControl.readJson(_week[currentPosition], true), JsonControl.readJson(_week[currentPosition +1], true), JsonControl.readJson(_week[currentPosition +2], true), JsonControl.readJson(_week[currentPosition +3], true), JsonControl.readJson(_week[currentPosition +4], true), JsonControl.readJson(_week[currentPosition +5], true), JsonControl.readJson(_week[currentPosition +6], true),};
 
         //create our day strings manually using yet another for loop/switch statement combo
-        String one, two, three, four, five, six, seven;
+        String one = "", two = "", three = "", four = "", five = "", six = "", seven = "";
+        StringBuilder builder = new StringBuilder();
+
+
 
         //create a resusable JSONObject to be overwritten for each string
         JSONObject day;
@@ -232,25 +236,87 @@ public static String date;
                 switch (i) {
                     case 0:
                         day = _weatherJSON.getJSONObject(i);
-                        one = day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather");
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            one = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 1:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            two = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 2:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            three = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 3:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            four = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 4:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            five = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 5:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            six = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     case 6:
                         day = _weatherJSON.getJSONObject(i);
+                        builder.append(day.getString("weekday") + "\r\n" + "\r\n" + day.getString("weather") + "\r\n");
+                        System.out.println("Builder's length was:  " + builder.length());
+                        if (builder.length() > 50)
+                        {
+                            builder.setLength(50);
+                            builder.append("  ..."+ "\r\n");
+                            seven = builder.toString();
+                            builder.setLength(0);
+                        }
                         break;
                     default:
                         break;
@@ -259,6 +325,7 @@ public static String date;
                 e.printStackTrace();
             }
         }
+        _allWeather = new String[]{one, two, three, four, five, six, seven};
     }
 
 
@@ -279,10 +346,11 @@ public static String date;
 
 
         //now that we know what today is, get it's weather and set to text view
-        String todaysWeather = JsonControl.readJson(today, false);
+        getAllWeather();
+        String todaysWeather = _allWeather[0];;
         TextView weatherView = (TextView) findViewById(R.id.weather_holder);
         weatherView.setText(todaysWeather);
-        getAllWeather();
+
 
         //create our arrayAdapter for the spinner
 
@@ -302,7 +370,7 @@ public static String date;
                 //only update the UI if the user picks a different day
                 if (!(selected.equals(_current))) {
                     _current = selected;
-                    setDay(selected);
+                    setDay(selected, position);
                 }
             }
 
@@ -319,6 +387,8 @@ public static String date;
         //set our adapter
         gridView.setAdapter(gridAdapter);
 
+
+
         //create onClick method
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -327,7 +397,7 @@ public static String date;
                 System.out.println("Selected day was:  " + selected);
                 if (!(selected.equals(_current))) {
                     _current = selected;
-                    setDay(selected);
+                    setDay(selected, position);
                     //also this time we need to keep our spinner in sync as well
                     Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                     spinner.setSelection(position, true);

@@ -80,4 +80,20 @@
         android:layout_above="@id/weather_grid"
         android:layout_alignParentStart="true" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@id/image_holder"
+        android:layout_alignBottom="@id/refresh_button"
+        android:layout_alignTop="@id/refresh_button"
+        android:layout_alignParentStart="true"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:minHeight="100dp"
+        android:layout_alignEnd="@id/time_label"
+        android:visibility="visible"
+        android:baselineAlignBottom="true"
+        android:layout_alignParentEnd="false" />
+
 </RelativeLayout>

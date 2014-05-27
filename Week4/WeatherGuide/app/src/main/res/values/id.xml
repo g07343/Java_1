@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Matthew Lewis-->
+<!--Term 1405-->
+<!--id.xml file-->
+<resources>
+    <item
+        type="id"
+        name="selected_day" />
+    <item
+        type="id"
+        name="grid_view"/>
+    <item
+        type="id"
+        name="selected_label"/>
+    <item
+        type="id"
+        name="day_selector"/>
+    <item
+        type="id"
+        name="weather_holder"/>
+    <item
+        type="id"
+        name="weather_grid"/>
+    <item
+        type="id"
+        name="refresh_button"/>
+    <item
+        type="id"
+        name="time_label"/>
+</resources>

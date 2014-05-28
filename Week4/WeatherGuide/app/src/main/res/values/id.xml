@@ -30,4 +30,52 @@
     <item
         type="id"
         name="image_holder"/>
+    <item
+        type="id"
+        name="flipper_holder"/>
+    <item
+        type="id"
+        name="flipper_linear"/>
+    <item
+        type="id"
+        name="flipper_text0"/>
+    <item
+        type="id"
+        name="flipper_image0"/>
+    <item
+        type="id"
+        name="flipper_text1"/>
+    <item
+        type="id"
+        name="flipper_image1"/>
+    <item
+        type="id"
+        name="flipper_text2"/>
+    <item
+        type="id"
+        name="flipper_image2"/>
+    <item
+        type="id"
+        name="flipper_text3"/>
+    <item
+        type="id"
+        name="flipper_image3"/>
+    <item
+        type="id"
+        name="flipper_text4"/>
+    <item
+        type="id"
+        name="flipper_image4"/>
+    <item
+        type="id"
+        name="flipper_text5"/>
+    <item
+        type="id"
+        name="flipper_image5"/>
+    <item
+        type="id"
+        name="flipper_text6"/>
+    <item
+        type="id"
+        name="flipper_image6"/>
 </resources>

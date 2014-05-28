@@ -14,7 +14,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import android.graphics.Color;
@@ -32,6 +34,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import static com.mattlewis.weatherguide.app.R.layout.flipper;
 
 public class MainActivity extends Activity{
 
@@ -65,6 +69,10 @@ public String today;
 public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/";
 
 public static Boolean doneLoading = false;
+
+private ViewFlipper viewFlipper;
+private float initialX;
+private int flipperCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,8 +249,8 @@ public static Boolean doneLoading = false;
 
         //update our weather information to the correct day
         String weather = _allWeather[position];
-        TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
-        selectedWeather.setText(weather);
+//        TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
+//        selectedWeather.setText(weather);
     }
 
     //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
@@ -429,8 +437,8 @@ public static Boolean doneLoading = false;
             //now that we know what today is, get it's weather and set to text view
 
             String todaysWeather = "Loading...";
-            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-            weatherView.setText(todaysWeather);
+//            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+//            weatherView.setText(todaysWeather);
 
 
             //create our arrayAdapter for the spinner
@@ -450,6 +458,9 @@ public static Boolean doneLoading = false;
             //set our adapter
             gridView.setAdapter(gridAdapter);
 
+//            TextView flipperText = (TextView) findViewById(R.id.flipper_text0);
+//            flipperText.setText("Loading...");
+
         } else {
 
             ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
@@ -464,8 +475,8 @@ public static Boolean doneLoading = false;
             //now that we know what today is, get it's weather and set to text view
 
             String todaysWeather = _allWeather[0];
-            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-            weatherView.setText(todaysWeather);
+//            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+//            weatherView.setText(todaysWeather);
 
 
             //create our arrayAdapter for the spinner
@@ -487,6 +498,7 @@ public static Boolean doneLoading = false;
                     if (!(selected.equals(_current))) {
                         _current = selected;
                         setDay(selected, position);
+                        setFlipper(position);
                     }
                 }
 
@@ -516,9 +528,95 @@ public static Boolean doneLoading = false;
                         //also this time we need to keep our spinner in sync as well
                         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                         spinner.setSelection(position, true);
+                        setFlipper(position);
                     }
                 }
             });
+
+            //set up our view flipper
+            LinearLayout flipperHolder = (LinearLayout) findViewById(R.id.flipper_holder);
+
+
+            LayoutInflater inflater;
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            LinearLayout flipperLinear = (LinearLayout) inflater.inflate(R.layout.flipper,
+                    null);
+
+
+            flipperHolder.addView(flipperLinear);
+
+            viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+            viewFlipper.setInAnimation(context, R.anim.abc_fade_in);
+            viewFlipper.setOutAnimation(context, R.anim.abc_fade_out);
+
+            StringBuilder builder = new StringBuilder();
+            String textId = "flipper_text";
+
+            for (int i=0; i<7; i++)
+            {
+                TextView flipperText;
+                ImageView flipperImage;
+
+                switch (i){
+                    case 0:
+                        flipperText = (TextView) findViewById(R.id.flipper_text0);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image0);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 1:
+                        flipperText = (TextView) findViewById(R.id.flipper_text1);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image1);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 2:
+                        flipperText = (TextView) findViewById(R.id.flipper_text2);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image2);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 3:
+                        flipperText = (TextView) findViewById(R.id.flipper_text3);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image3);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 4:
+                        flipperText = (TextView) findViewById(R.id.flipper_text4);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image4);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 5:
+                        flipperText = (TextView) findViewById(R.id.flipper_text5);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image5);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 6:
+                        TextView flipperText6 = (TextView) findViewById(R.id.flipper_text6);
+                        String todaysWeather6 = _allWeather[i];
+                        flipperText6.setText(todaysWeather6);
+
+                        ImageView flipperImage6 = (ImageView) findViewById(R.id.flipper_image6);
+                        flipperImage6.setImageBitmap(_allImages[i]);
+                        break;
+                }
+            }
         }
     }
 
@@ -578,10 +676,14 @@ public static Boolean doneLoading = false;
 
     //this function just serves to remove a decent chunk of logic from the onCreate's various if/else statements
     public void panicTime() {
-        final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+
+        Toast.makeText(MainActivity.context, "You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.",
+                Toast.LENGTH_LONG).show();
+
+//        final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
         final Button refreshButton = (Button) findViewById(R.id.refresh_button);
-        weatherView.setTextColor(Color.RED);
-        weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.");
+//        weatherView.setTextColor(Color.RED);
+//        weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.");
         refreshButton.setVisibility(View.VISIBLE);
 
         //set onClick to basically 'recheck' if we have internet
@@ -589,15 +691,16 @@ public static Boolean doneLoading = false;
             @Override
             public void onClick(View v) {
                 Boolean connectionTest = connectionStatus();
-                String postalCode = LocationHandler.getZip(context);
+
                 if (connectionTest)
                 {
+                    String postalCode = LocationHandler.getZip(context);
                     if (postalCode != null)
                     {
                         //since we have both internet AND a valid zip code, build url and get data
                         buildUrl(postalCode);
                         refreshButton.setVisibility(View.GONE);
-                        weatherView.setTextColor(Color.BLACK);
+                        //weatherView.setTextColor(Color.BLACK);
 
                         //begin the process of getting our remote data from API
                         MainActivity.getData data = new getData();
@@ -610,9 +713,13 @@ public static Boolean doneLoading = false;
                         //run our full set up function passing the current day
                         setUp(today);
                     } else {
-                        //allow the user to put in their own postal code
-                        weatherView.setText("Location is turned off.  Please re-enable to get weather.");
+                        Toast.makeText(MainActivity.context, "Location is turned off.  Please re-enable to get weather.",
+                                Toast.LENGTH_LONG).show();
+                        //weatherView.setText("Location is turned off.  Please re-enable to get weather.");
                     }
+                } else {
+                    Toast.makeText(MainActivity.context, "You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -642,16 +749,13 @@ public static Boolean doneLoading = false;
             doneLoading = true;
 
             //find our imageView and apply today's weather icon
-            ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
+            ImageView imageView = (ImageView) (findViewById(R.id.image_holder));
             imageView.setImageBitmap(_allImages[0]);
 
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
             textView.setText(today);
 
-            String todaysWeather = _allWeather[0];
-            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-            weatherView.setText(todaysWeather);
 
             //create our spinner for users to pick a day
             Spinner spinner = (Spinner) findViewById(R.id.day_selector);
@@ -669,6 +773,7 @@ public static Boolean doneLoading = false;
                     if (!(selected.equals(_current))) {
                         _current = selected;
                         setDay(selected, position);
+                        setFlipper(position);
                     }
                 }
 
@@ -684,7 +789,6 @@ public static Boolean doneLoading = false;
             gridView.setAdapter(gridAdapter);
 
 
-
             //create onClick method
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -697,6 +801,7 @@ public static Boolean doneLoading = false;
                         //also this time we need to keep our spinner in sync as well
                         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                         spinner.setSelection(position, true);
+                        setFlipper(position);
                     }
                 }
             });
@@ -709,7 +814,161 @@ public static Boolean doneLoading = false;
                 e.printStackTrace();
                 Log.e(TAG, e.toString());
             }
+
+            //set up our view flipper
+            LinearLayout flipperHolder = (LinearLayout) findViewById(R.id.flipper_holder);
+
+
+            LayoutInflater inflater;
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            LinearLayout flipperLinear = (LinearLayout) inflater.inflate(R.layout.flipper,
+                    null);
+
+
+            flipperHolder.addView(flipperLinear);
+
+            viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
+            viewFlipper.setInAnimation(context, R.anim.abc_fade_in);
+            viewFlipper.setOutAnimation(context, R.anim.abc_fade_out);
+
+            StringBuilder builder = new StringBuilder();
+            String textId = "flipper_text";
+
+            for (int i=0; i<7; i++)
+            {
+                TextView flipperText;
+                ImageView flipperImage;
+                String todaysWeather;
+                switch (i){
+                    case 0:
+                        flipperText = (TextView) findViewById(R.id.flipper_text0);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image0);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 1:
+                        flipperText = (TextView) findViewById(R.id.flipper_text1);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image1);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 2:
+                        flipperText = (TextView) findViewById(R.id.flipper_text2);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image2);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 3:
+                        flipperText = (TextView) findViewById(R.id.flipper_text3);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image3);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 4:
+                        flipperText = (TextView) findViewById(R.id.flipper_text4);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image4);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 5:
+                        flipperText = (TextView) findViewById(R.id.flipper_text5);
+                        todaysWeather = _allWeather[i];
+                        flipperText.setText(todaysWeather);
+
+                        flipperImage = (ImageView) findViewById(R.id.flipper_image5);
+                        flipperImage.setImageBitmap(_allImages[i]);
+                        break;
+                    case 6:
+                        TextView flipperText6 = (TextView) findViewById(R.id.flipper_text6);
+                        String todaysWeather6 = _allWeather[i];
+                        flipperText6.setText(todaysWeather6);
+
+                        ImageView flipperImage6 = (ImageView) findViewById(R.id.flipper_image6);
+                        flipperImage6.setImageBitmap(_allImages[i]);
+                        break;
+                }
+            }
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent touchevent) {
+        //System.out.println("Counter is at:  " + flipperCounter);
+        switch (touchevent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                initialX = touchevent.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                float finalX = touchevent.getX();
+                //System.out.println("initialX was:  " + initialX);
+                //System.out.println("finalX is:  " + finalX);
+                float calculatedX = initialX - finalX;
+                //System.out.println("Calculated was:  " + calculatedX);
+                if (initialX < finalX) {
+                    if (calculatedX < -300)
+                    {
+                        if (viewFlipper.getDisplayedChild() == 0)
+                            break;
+                        //System.out.println("Top fires!");
+                        flipperCounter ++;
+                        if (flipperCounter >= 6)
+                        {
+                            flipperCounter = 6;
+                        }
+
+
+                        viewFlipper.showPrevious();
+                    }
+
+
+                } else {
+                    if (calculatedX > 300)
+                    {
+                        if (viewFlipper.getDisplayedChild() == 6)
+                            break;
+                        //System.out.println("Bottom fires!");
+                        flipperCounter ++;
+                        if (flipperCounter <= 0)
+                        {
+                            flipperCounter = 0;
+                        }
+
+
+                        viewFlipper.showNext();
+                    }
+
+
+                }
+                flipperCounter = viewFlipper.getDisplayedChild();
+                System.out.println("Counter is:  " + flipperCounter);
+                String selected = _week[flipperCounter];
+                //only update the UI if the user picks a different day
+                if (!(selected.equals(_current))) {
+                    _current = selected;
+                    setDay(selected, flipperCounter);
+                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                    spinner.setSelection(flipperCounter, true);
+                }
+                break;
+        }
+        return false;
+    }
+
+    public void setFlipper(int position) {
+        System.out.println("Set Flipper function runs");
+        viewFlipper.setDisplayedChild(position);
+        flipperCounter = position;
     }
 }
 

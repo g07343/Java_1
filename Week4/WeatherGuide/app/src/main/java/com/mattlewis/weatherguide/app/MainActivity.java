@@ -904,64 +904,68 @@ private int flipperCounter = 0;
 
     @Override
     public boolean onTouchEvent(MotionEvent touchevent) {
-        //System.out.println("Counter is at:  " + flipperCounter);
-        switch (touchevent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                initialX = touchevent.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                float finalX = touchevent.getX();
-                //System.out.println("initialX was:  " + initialX);
-                //System.out.println("finalX is:  " + finalX);
-                float calculatedX = initialX - finalX;
-                //System.out.println("Calculated was:  " + calculatedX);
-                if (initialX < finalX) {
-                    if (calculatedX < -300)
-                    {
-                        if (viewFlipper.getDisplayedChild() == 0)
-                            break;
-                        //System.out.println("Top fires!");
-                        flipperCounter ++;
-                        if (flipperCounter >= 6)
+        //don't want this to do anything until we have everything loaded, otherwise we'll get a crash
+        if (doneLoading)
+        {
+            switch (touchevent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    initialX = touchevent.getX();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    float finalX = touchevent.getX();
+                    //System.out.println("initialX was:  " + initialX);
+                    //System.out.println("finalX is:  " + finalX);
+                    float calculatedX = initialX - finalX;
+                    //System.out.println("Calculated was:  " + calculatedX);
+                    if (initialX < finalX) {
+                        if (calculatedX < -300)
                         {
-                            flipperCounter = 6;
+                            if (viewFlipper.getDisplayedChild() == 0)
+                                break;
+                            //System.out.println("Top fires!");
+                            flipperCounter ++;
+                            if (flipperCounter >= 6)
+                            {
+                                flipperCounter = 6;
+                            }
+
+
+                            viewFlipper.showPrevious();
                         }
 
 
-                        viewFlipper.showPrevious();
-                    }
-
-
-                } else {
-                    if (calculatedX > 300)
-                    {
-                        if (viewFlipper.getDisplayedChild() == 6)
-                            break;
-                        //System.out.println("Bottom fires!");
-                        flipperCounter ++;
-                        if (flipperCounter <= 0)
+                    } else {
+                        if (calculatedX > 300)
                         {
-                            flipperCounter = 0;
+                            if (viewFlipper.getDisplayedChild() == 6)
+                                break;
+                            //System.out.println("Bottom fires!");
+                            flipperCounter ++;
+                            if (flipperCounter <= 0)
+                            {
+                                flipperCounter = 0;
+                            }
+
+
+                            viewFlipper.showNext();
                         }
 
 
-                        viewFlipper.showNext();
                     }
-
-
-                }
-                flipperCounter = viewFlipper.getDisplayedChild();
-                System.out.println("Counter is:  " + flipperCounter);
-                String selected = _week[flipperCounter];
-                //only update the UI if the user picks a different day
-                if (!(selected.equals(_current))) {
-                    _current = selected;
-                    setDay(selected, flipperCounter);
-                    Spinner spinner = (Spinner) findViewById(R.id.day_selector);
-                    spinner.setSelection(flipperCounter, true);
-                }
-                break;
+                    flipperCounter = viewFlipper.getDisplayedChild();
+                    System.out.println("Counter is:  " + flipperCounter);
+                    String selected = _week[flipperCounter];
+                    //only update the UI if the user picks a different day
+                    if (!(selected.equals(_current))) {
+                        _current = selected;
+                        setDay(selected, flipperCounter);
+                        Spinner spinner = (Spinner) findViewById(R.id.day_selector);
+                        spinner.setSelection(flipperCounter, true);
+                    }
+                    break;
+            }
         }
+
         return false;
     }
 

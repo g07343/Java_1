@@ -19,8 +19,8 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
-import android.graphics.Color;
 import android.content.Context;
+import com.mattlewis.NetworkManager;
 import com.mattlewis.weatherguide.app.dataHandler.FileManager;
 import com.mattlewis.weatherguide.app.dataHandler.JsonControl;
 import com.mattlewis.weatherguide.app.dataHandler.LocationHandler;
@@ -34,8 +34,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import static com.mattlewis.weatherguide.app.R.layout.flipper;
 
 public class MainActivity extends Activity{
 
@@ -78,7 +76,6 @@ private int flipperCounter = 0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-
         //set our default content view
         setContentView(R.layout.activity_main);
 
@@ -632,22 +629,9 @@ private int flipperCounter = 0;
     }
 
     public Boolean connectionStatus() {
-        //create initial boolean to set true/false depending on network conditions
-        Boolean connected = false;
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        //check to make sure we have a valid object
-        if (networkInfo != null)
-        {   //check the result to make sure it is actually connected and set boolean to true if so
-            if (networkInfo.isConnected())
-            {
-                //only run this within an emulator, since the stupid thing will still claim to be connected to a mobile network, even if the host computer has no internet connection
-
-                connected = true;
-            }
-        }
-        return connected;
+       NetworkManager manager = new NetworkManager();
+        boolean isConnected = manager.connectionStatus(context);
+        return isConnected;
     }
 
     public static String getResponse(URL url) {

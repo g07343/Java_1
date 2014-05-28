@@ -33,7 +33,6 @@ public class FileManager {
             try {
                 fos.write(serializedData.getBytes());
                 fos.close();
-                System.out.println("File written successfully!");
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG, e.toString());
@@ -67,7 +66,6 @@ public class FileManager {
         {
             try {
                 savedArray = new JSONArray(builder.toString());
-                System.out.println("FILE FOUND/SET");
                 return savedArray;
             } catch (JSONException e) {
                 e.printStackTrace();

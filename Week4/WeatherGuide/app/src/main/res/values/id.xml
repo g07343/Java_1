@@ -27,4 +27,7 @@
     <item
         type="id"
         name="time_label"/>
+    <item
+        type="id"
+        name="image_holder"/>
 </resources>

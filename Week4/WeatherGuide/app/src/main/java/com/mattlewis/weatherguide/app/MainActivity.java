@@ -6,10 +6,13 @@
 package com.mattlewis.weatherguide.app;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -49,6 +52,8 @@ public static String[] _formattedWeather;
 
 public static JSONArray _weatherJSON;
 
+public static Bitmap[] _allImages;
+
 static String TAG = "NETWORK DATA - MainActivity";
 
 //global public date for use when saving data
@@ -60,7 +65,6 @@ public String today;
 public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc205a/forecast10day/q/";
 
 public static Boolean doneLoading = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +227,11 @@ public static Boolean doneLoading = false;
 
     //this function gets called whenever the user selects a new day from the spinner.  Updates the UI accordingly
     public void setDay(String day, int position) {
+
+        //change our imageView to reflect the correct icon for the weather
+        ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
+        imageView.setImageBitmap(_allImages[position]);
+
         //set our label to something that makes more sense
         TextView dayLabel = (TextView) findViewById(R.id.selected_label);
         dayLabel.setText("Selected day is:");
@@ -242,20 +251,36 @@ public static Boolean doneLoading = false;
         //create our day strings manually using yet another for loop/switch statement combo
         String one = "", two = "", three = "", four = "", five = "", six = "", seven = "";
         String uOne = "", uTwo = "", uThree = "", uFour = "", uFive = "", uSix = "", uSeven = "";
+        Bitmap imageOne = null;
+        Bitmap imageTwo = null;
+        Bitmap imageThree = null;
+        Bitmap imageFour = null;
+        Bitmap imageFive = null;
+        Bitmap imageSix = null;
+        Bitmap imageSeven = null;
         StringBuilder builder = new StringBuilder();
 
         _weatherJSON =  FileManager.ReadData(context);
 
-        //create a resusable JSONObject to be overwritten for each string
+        //create a reusable JSONObject to be overwritten for each string
         JSONObject day;
+        //need these to 'rebuild' our images that were stored as byteArrays
+        BitmapFactory factory = new BitmapFactory();
+        byte[] byteArray = new byte[0];
+        JSONArray rawImage = null;
+
         for (int i=0; i<7; i++)
-        {   //absolutely need to manually set the length of each string as this determines the rowheight for the items in grid view.  Different string lengths
+        {   //absolutely need to manually set the length of each string as this determines the row height for the items in grid view.  Different string lengths
             //result in different heights for each grid view item, which causes crazy errors.
             try {
                 switch (i) {
                     case 0:
                         //for each, assign/reassign our JSONObject to a single new day object
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageOne = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
+
                         //use our builder to capture each
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uOne = builder.toString();
@@ -271,6 +296,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 1:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageTwo = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uTwo = builder.toString();
                         builder.setLength(0);
@@ -285,6 +313,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 2:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageThree = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uThree = builder.toString();
                         builder.setLength(0);
@@ -299,6 +330,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 3:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageFour = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uFour = builder.toString();
                         builder.setLength(0);
@@ -313,6 +347,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 4:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageFive = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uFive = builder.toString();
                         builder.setLength(0);
@@ -327,6 +364,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 5:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageSix = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uSix = builder.toString();
                         builder.setLength(0);
@@ -341,6 +381,9 @@ public static Boolean doneLoading = false;
                         break;
                     case 6:
                         day = _weatherJSON.getJSONObject(i);
+                        byteArray = Base64.decode(day.getString("image"), Base64.DEFAULT);
+
+                        imageSeven = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
                         builder.append("\r\n").append(day.getString("weather")).append("\r\n");
                         uSeven = builder.toString();
                         builder.setLength(0);
@@ -363,6 +406,7 @@ public static Boolean doneLoading = false;
         }
         _allWeather = new String[]{uOne, uTwo, uThree, uFour, uFive, uSix, uSeven};
         _formattedWeather = new String[]{one, two, three, four, five, six, seven};
+        _allImages = new Bitmap[]{imageOne, imageTwo, imageThree, imageFour, imageFive, imageSix, imageSeven};
     }
 
 
@@ -407,6 +451,10 @@ public static Boolean doneLoading = false;
             gridView.setAdapter(gridAdapter);
 
         } else {
+
+            ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
+            imageView.setImageBitmap(_allImages[0]);
+
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
 
@@ -485,17 +533,19 @@ public static Boolean doneLoading = false;
         _urlString = completedURL;
     }
 
-    public static Boolean connectionStatus() {
+    public Boolean connectionStatus() {
         //create initial boolean to set true/false depending on network conditions
         Boolean connected = false;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         //check to make sure we have a valid object
         if (networkInfo != null)
         {   //check the result to make sure it is actually connected and set boolean to true if so
             if (networkInfo.isConnected())
             {
-                Log.i(TAG, "Connection type:  " + networkInfo.getTypeName());
+                //only run this within an emulator, since the stupid thing will still claim to be connected to a mobile network, even if the host computer has no internet connection
+
                 connected = true;
             }
         }
@@ -591,7 +641,10 @@ public static Boolean doneLoading = false;
             getAllWeather();
             doneLoading = true;
 
-            System.out.println("BOOLEAN WAS TRUE...");
+            //find our imageView and apply today's weather icon
+            ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
+            imageView.setImageBitmap(_allImages[0]);
+
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
             textView.setText(today);

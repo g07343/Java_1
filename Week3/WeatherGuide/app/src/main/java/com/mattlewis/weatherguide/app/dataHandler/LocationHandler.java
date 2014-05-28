@@ -6,11 +6,16 @@ package com.mattlewis.weatherguide.app.dataHandler;
 
 import android.content.Context;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.mattlewis.weatherguide.app.MainActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,11 +62,32 @@ public class LocationHandler {
 
             }
         };
-        //request location updates for the users current whereabouts
-        locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+        //need to check if being run within an emulator, since this causes havok.
+        boolean inEmulator = false;
+        String brand = Build.BRAND;
+        if (brand.compareTo("generic") == 0)
+        {
+            //set location manually to avoid headache
+            Toast.makeText(MainActivity.context, "Emulator detected!  Manually setting location so app doesn't crash!",
+                    Toast.LENGTH_LONG).show();
+            return "63104";
+        } else {
+
+        }
 
         //set the source we want to pull location from, just network for now...
-        String locationProvider = android.location.LocationManager.NETWORK_PROVIDER;
+        //String locationProvider = android.location.LocationManager.NETWORK_PROVIDER;
+
+        Criteria criteria = new Criteria();
+
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        String locationProvider = locationManager.getBestProvider(criteria, true);
+
+        //request location updates for the users current whereabouts
+        //locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+
 
         //get last location from locationManager
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);

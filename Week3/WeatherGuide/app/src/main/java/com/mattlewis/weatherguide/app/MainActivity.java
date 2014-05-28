@@ -66,7 +66,6 @@ public static String _urlString = "http://api.wunderground.com/api/a57ee1fa24cc2
 
 public static Boolean doneLoading = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -534,17 +533,19 @@ public static Boolean doneLoading = false;
         _urlString = completedURL;
     }
 
-    public static Boolean connectionStatus() {
+    public Boolean connectionStatus() {
         //create initial boolean to set true/false depending on network conditions
         Boolean connected = false;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         //check to make sure we have a valid object
         if (networkInfo != null)
         {   //check the result to make sure it is actually connected and set boolean to true if so
             if (networkInfo.isConnected())
             {
-                Log.i(TAG, "Connection type:  " + networkInfo.getTypeName());
+                //only run this within an emulator, since the stupid thing will still claim to be connected to a mobile network, even if the host computer has no internet connection
+
                 connected = true;
             }
         }

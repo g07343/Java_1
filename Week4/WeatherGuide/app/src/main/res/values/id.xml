@@ -17,9 +17,6 @@
         name="day_selector"/>
     <item
         type="id"
-        name="weather_holder"/>
-    <item
-        type="id"
         name="weather_grid"/>
     <item
         type="id"

@@ -422,7 +422,7 @@ private int flipperCounter = 0;
 
 
             //create our arrayAdapter for the spinner
-            String[] loadingArray = new String[]{"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading," ,"Loading,"};
+            String[] loadingArray = new String[]{"Loading..." ,"Loading..." ,"Loading..." ,"Loading..." ,"Loading..." ,"Loading..." ,"Loading..."};
             ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, loadingArray);
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -636,10 +636,8 @@ private int flipperCounter = 0;
         Toast.makeText(MainActivity.context, "You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.",
                 Toast.LENGTH_LONG).show();
 
-//        final TextView weatherView = (TextView) findViewById(R.id.weather_holder);
+
         final Button refreshButton = (Button) findViewById(R.id.refresh_button);
-//        weatherView.setTextColor(Color.RED);
-//        weatherView.setText("You don't appear to have an active internet connection.  Please connect to the internet to continue.  Also please make sure 'Location' is enabled in settings.");
         refreshButton.setVisibility(View.VISIBLE);
 
         //set onClick to basically 'recheck' if we have internet
@@ -706,6 +704,8 @@ private int flipperCounter = 0;
             super.onPostExecute(s);
             getAllWeather();
             doneLoading = true;
+
+            //hide our progress bar now that loading is finished
             ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
             pb.setVisibility(View.GONE);
 
@@ -785,10 +785,11 @@ private int flipperCounter = 0;
 
             flipperHolder.addView(flipperLinear);
 
+            //set default animations for flipper
             viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
             viewFlipper.setInAnimation(context, R.anim.abc_fade_in);
             viewFlipper.setOutAnimation(context, R.anim.abc_fade_out);
-
+            //set up the child views' elements of viewflipper to display correct data
             for (int i=0; i<7; i++)
             {
                 TextView flipperText;
@@ -873,8 +874,6 @@ private int flipperCounter = 0;
                     //capture the float x/y values of where the user lifted their finger
                     float finalX = touchevent.getX();
                     float finalY = touchevent.getY();
-                    System.out.println("First Y point was:  " + initialY);
-                    System.out.println("Last Y point was:  " + finalY);
 
                     //figure out how far the distance their finger traveled
                     float calculatedX = initialX - finalX;
@@ -898,14 +897,13 @@ private int flipperCounter = 0;
                                     data.execute();
                                     Toast.makeText(MainActivity.context, "Updating weather...",
                                             Toast.LENGTH_LONG).show();
+                                    //show our animated progress bar
                                     ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
                                     pb.setVisibility(View.VISIBLE);
                                 }
-
                             }
                         }
                     }
-
                     if (initialX < finalX) {
                         //user swiped left
                         if (calculatedX < -300)
@@ -922,7 +920,6 @@ private int flipperCounter = 0;
                             //swiped left far enough, so show the last displayChild
                             viewFlipper.showPrevious();
                         }
-
                     //user swiped right
                     } else if (initialX > finalX){
                         //check to see if they swiped far enough
@@ -940,8 +937,6 @@ private int flipperCounter = 0;
                             //show the next displayChild element
                             viewFlipper.showNext();
                         }
-
-
                     }
                     //set our counter to whatever the current display child is, which allows us to keep the interface in sync
                     flipperCounter = viewFlipper.getDisplayedChild();

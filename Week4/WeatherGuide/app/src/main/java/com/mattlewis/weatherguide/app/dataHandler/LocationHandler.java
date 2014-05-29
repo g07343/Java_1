@@ -78,7 +78,7 @@ public class LocationHandler {
 
         Criteria criteria = new Criteria();
 
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAccuracy(Criteria.ACCURACY_MEDIUM);
         String locationProvider = locationManager.getBestProvider(criteria, true);
 
         //request location updates for the users current whereabouts

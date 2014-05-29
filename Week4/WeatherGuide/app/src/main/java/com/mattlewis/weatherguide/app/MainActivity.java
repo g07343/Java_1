@@ -860,15 +860,43 @@ private int flipperCounter = 0;
                 case MotionEvent.ACTION_DOWN:
                     initialX = touchevent.getX();
                     initialY = touchevent.getY();
-                    break;
+
                 case MotionEvent.ACTION_UP:
+
                     //capture the float x/y values of where the user lifted their finger
                     float finalX = touchevent.getX();
                     float finalY = touchevent.getY();
+                    System.out.println("First Y point was:  " + initialY);
+                    System.out.println("Last Y point was:  " + finalY);
 
                     //figure out how far the distance their finger traveled
                     float calculatedX = initialX - finalX;
                     float calculatedY = initialY - finalY;
+                    System.out.println("Distance swiped was:  " + calculatedY);
+
+                    if (initialY < finalY)
+                    {
+                        if (calculatedY < -850)
+                        {
+                           //need to ensure the user has proper connectivity before refreshing
+                            Boolean connectionTest = connectionStatus();
+                            if (connectionTest)
+                            {   //check if we have a valid location
+                                String zip = LocationHandler.getZip(context);
+                                if (zip != null)
+                                {   //rerun the getData function and get latest weather!
+                                    doneLoading = false;
+                                    setUp(today);
+                                    MainActivity.getData data = new getData();
+                                    data.execute();
+                                    Toast.makeText(MainActivity.context, "Updating weather...",
+                                            Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        }
+                    }
+
                     if (initialX < finalX) {
                         //user swiped left
                         if (calculatedX < -300)
@@ -887,7 +915,7 @@ private int flipperCounter = 0;
                         }
 
                     //user swiped right
-                    } else {
+                    } else if (initialX > finalX){
                         //check to see if they swiped far enough
                         if (calculatedX > 300)
                         {   //don't display next child since we are at the last one

@@ -8,6 +8,7 @@ package com.mattlewis.weatherguide.app;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
@@ -75,6 +76,8 @@ private int flipperCounter = 0;
         context = this;
         //set our default content view
         setContentView(R.layout.activity_main);
+        View view = this.getWindow().getDecorView();
+        view.setBackgroundColor(Color.WHITE);
 
         //set our refresh button to be hidden by default
         final Button refreshButton = (Button) findViewById(R.id.refresh_button);
@@ -507,6 +510,7 @@ private int flipperCounter = 0;
                     null);
 
 
+
             flipperHolder.addView(flipperLinear);
 
             viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
@@ -843,7 +847,7 @@ private int flipperCounter = 0;
             }
         }
     }
-
+    //we use this function to detect the user swiping left and right in order to 'scroll' through the view flipper
     @Override
     public boolean onTouchEvent(MotionEvent touchevent) {
         //don't want this to do anything until we have everything loaded, otherwise we'll get a crash

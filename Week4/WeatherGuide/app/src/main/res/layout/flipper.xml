@@ -17,12 +17,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text0"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -30,7 +31,6 @@
                 android:id="@id/flipper_image0"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,12 +39,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text1"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -52,7 +53,6 @@
                 android:id="@id/flipper_image1"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -61,12 +61,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text2"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -74,7 +75,6 @@
                 android:id="@id/flipper_image2"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -83,12 +83,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text3"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -96,7 +97,6 @@
                 android:id="@id/flipper_image3"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -105,12 +105,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text4"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -118,7 +119,6 @@
                 android:id="@id/flipper_image4"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -127,12 +127,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text5"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -140,7 +141,6 @@
                 android:id="@id/flipper_image5"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -149,12 +149,13 @@
             android:weightSum="1"
             android:id="@id/flipper_linear">
             <TextView
+                style="@style/blue_bold"
                 android:layout_width="169dp"
                 android:layout_height="230dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@id/flipper_text6"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.99" />
 
             <ImageView
                 android:layout_width="100dp"
@@ -162,7 +163,6 @@
                 android:id="@id/flipper_image6"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp" />
         </LinearLayout>
     </ViewFlipper>

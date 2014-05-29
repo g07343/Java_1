@@ -13,11 +13,11 @@
     tools:context="com.mattlewis.weatherguide.app.MainActivity">
 
     <TextView
+        style="@style/blue_title"
         android:text="@string/hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@id/selected_day"
-        android:textColor="#3CC0FF"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignBottom="@+id/selected_label"
         android:layout_alignEnd="@+id/day_selector"
@@ -37,9 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="220dp"
         android:id="@id/weather_grid"
-        android:numColumns="auto_fit"
+        android:numColumns="2"
         android:paddingLeft="5dp"
-        android:stretchMode="columnWidth"
         android:background="#DCDCDC"
         android:paddingTop="10dp"
         android:scrollingCache="true"
@@ -55,7 +54,7 @@
         android:id="@+id/selected_label"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="75dp" />
+        android:layout_marginTop="65dp" />
 
     <Spinner
         android:layout_width="match_parent"

@@ -68,6 +68,7 @@ public static Boolean doneLoading = false;
 
 private ViewFlipper viewFlipper;
 private float initialX;
+private float initialY;
 private int flipperCounter = 0;
 
     @Override
@@ -854,18 +855,24 @@ private int flipperCounter = 0;
         if (doneLoading)
         {
             switch (touchevent.getAction()) {
+
+                //the user touched the screen so capture the coordinates of where
                 case MotionEvent.ACTION_DOWN:
                     initialX = touchevent.getX();
+                    initialY = touchevent.getY();
                     break;
                 case MotionEvent.ACTION_UP:
+                    //capture the float x/y values of where the user lifted their finger
                     float finalX = touchevent.getX();
-                    //System.out.println("initialX was:  " + initialX);
-                    //System.out.println("finalX is:  " + finalX);
+                    float finalY = touchevent.getY();
+
+                    //figure out how far the distance their finger traveled
                     float calculatedX = initialX - finalX;
-                    //System.out.println("Calculated was:  " + calculatedX);
+                    float calculatedY = initialY - finalY;
                     if (initialX < finalX) {
+                        //user swiped left
                         if (calculatedX < -300)
-                        {
+                        {   //don't continue since we don't have anything before the current displaychild
                             if (viewFlipper.getDisplayedChild() == 0)
                                 break;
                             //System.out.println("Top fires!");
@@ -875,14 +882,15 @@ private int flipperCounter = 0;
                                 flipperCounter = 6;
                             }
 
-
+                            //swiped left far enough, so show the last displayChild
                             viewFlipper.showPrevious();
                         }
 
-
+                    //user swiped right
                     } else {
+                        //check to see if they swiped far enough
                         if (calculatedX > 300)
-                        {
+                        {   //don't display next child since we are at the last one
                             if (viewFlipper.getDisplayedChild() == 6)
                                 break;
                             //System.out.println("Bottom fires!");
@@ -892,14 +900,15 @@ private int flipperCounter = 0;
                                 flipperCounter = 0;
                             }
 
-
+                            //show the next displayChild element
                             viewFlipper.showNext();
                         }
 
 
                     }
+                    //set our counter to whatever the current display child is, which allows us to keep the interface in sync
                     flipperCounter = viewFlipper.getDisplayedChild();
-                    System.out.println("Counter is:  " + flipperCounter);
+
                     String selected = _week[flipperCounter];
                     //only update the UI if the user picks a different day
                     if (!(selected.equals(_current))) {

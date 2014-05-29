@@ -63,7 +63,7 @@ public class JsonControl {
         String[] days = MainActivity._week;
         String title;
         String imageDataString;
-        byte[] byteArray = new byte[0];
+        byte[] byteArray;
         //since we only want every other result (don't need nighttime weather), add 2 when creating each day for our final JSONArray
         for (int i=0; i < 14; i+=2)
         {
@@ -82,7 +82,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -93,7 +93,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -104,7 +104,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -115,7 +115,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -126,7 +126,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -137,7 +137,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;
@@ -148,7 +148,7 @@ public class JsonControl {
                         //get the returned json object url and pass to the 'buildBitmap' function to get our image for storing
                         urlString = allWeather.getJSONObject(i).getString("icon_url");
                         byteArray = buildImage(urlString);
-                        imageDataString = new String(Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        imageDataString = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         dayObject.put("image", imageDataString);
                         formattedWeather.put(spot, dayObject);
                         break;

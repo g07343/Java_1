@@ -78,4 +78,7 @@
     <item
         type="id"
         name="flipper_image6"/>
+    <item
+        type="id"
+        name="progress_bar"/>
 </resources>

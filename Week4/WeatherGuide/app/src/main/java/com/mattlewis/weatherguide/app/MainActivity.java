@@ -79,7 +79,8 @@ private int flipperCounter = 0;
         setContentView(R.layout.activity_main);
         View view = this.getWindow().getDecorView();
         view.setBackgroundColor(Color.WHITE);
-
+        ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
+        pb.setVisibility(View.GONE);
         //set our refresh button to be hidden by default
         final Button refreshButton = (Button) findViewById(R.id.refresh_button);
         refreshButton.setVisibility(View.GONE);
@@ -99,6 +100,8 @@ private int flipperCounter = 0;
 
                 //build our dynamic url
                 buildUrl(zip);
+
+                pb.setVisibility(View.VISIBLE);
 
                 //begin the process of getting latest remote data from API
                 MainActivity.getData data = new getData();
@@ -655,6 +658,9 @@ private int flipperCounter = 0;
                         refreshButton.setVisibility(View.GONE);
                         //weatherView.setTextColor(Color.BLACK);
 
+                        ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
+                        pb.setVisibility(View.VISIBLE);
+
                         //begin the process of getting our remote data from API
                         MainActivity.getData data = new getData();
                         data.execute();
@@ -700,7 +706,8 @@ private int flipperCounter = 0;
             super.onPostExecute(s);
             getAllWeather();
             doneLoading = true;
-
+            ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
+            pb.setVisibility(View.GONE);
 
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
@@ -891,6 +898,8 @@ private int flipperCounter = 0;
                                     data.execute();
                                     Toast.makeText(MainActivity.context, "Updating weather...",
                                             Toast.LENGTH_LONG).show();
+                                    ProgressBar pb = (ProgressBar) findViewById(R.id.progress_bar);
+                                    pb.setVisibility(View.VISIBLE);
                                 }
 
                             }

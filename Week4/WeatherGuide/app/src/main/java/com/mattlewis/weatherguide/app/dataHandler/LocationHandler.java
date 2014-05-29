@@ -63,8 +63,7 @@ public class LocationHandler {
             }
         };
 
-        //need to check if being run within an emulator, since this causes havok.
-        boolean inEmulator = false;
+        //need to check if being run within an emulator, since this causes havoc.
         String brand = Build.BRAND;
         if (brand.compareTo("generic") == 0)
         {
@@ -72,8 +71,6 @@ public class LocationHandler {
             Toast.makeText(MainActivity.context, "Emulator detected!  Manually setting location so app doesn't crash!",
                     Toast.LENGTH_LONG).show();
             return "63104";
-        } else {
-
         }
 
         //set the source we want to pull location from, just network for now...

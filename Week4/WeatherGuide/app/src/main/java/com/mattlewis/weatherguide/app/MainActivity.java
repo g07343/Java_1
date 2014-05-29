@@ -8,14 +8,11 @@ package com.mattlewis.weatherguide.app;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -231,11 +228,7 @@ private int flipperCounter = 0;
     }
 
     //this function gets called whenever the user selects a new day from the spinner.  Updates the UI accordingly
-    public void setDay(String day, int position) {
-
-        //change our imageView to reflect the correct icon for the weather
-        ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
-        imageView.setImageBitmap(_allImages[position]);
+    public void setDay(String day) {
 
         //set our label to something that makes more sense
         TextView dayLabel = (TextView) findViewById(R.id.selected_label);
@@ -244,16 +237,13 @@ private int flipperCounter = 0;
         TextView selectedDay = (TextView) findViewById(R.id.selected_day);
         selectedDay.setText(day);
 
-        //update our weather information to the correct day
-        String weather = _allWeather[position];
-//        TextView selectedWeather = (TextView) findViewById(R.id.weather_holder);
-//        selectedWeather.setText(weather);
     }
 
     //this function sets up our allWeather array to contain all of our information for display in the gridview (based on current day)
+
     public void getAllWeather() {
 
-        //create our day strings manually using yet another for loop/switch statement combo
+        //create our day strings manually using yet another for loop/switch statement combo as well as our bitmap objects
         String one = "", two = "", three = "", four = "", five = "", six = "", seven = "";
         String uOne = "", uTwo = "", uThree = "", uFour = "", uFive = "", uSix = "", uSeven = "";
         Bitmap imageOne = null;
@@ -270,9 +260,7 @@ private int flipperCounter = 0;
         //create a reusable JSONObject to be overwritten for each string
         JSONObject day;
         //need these to 'rebuild' our images that were stored as byteArrays
-        BitmapFactory factory = new BitmapFactory();
-        byte[] byteArray = new byte[0];
-        JSONArray rawImage = null;
+        byte[] byteArray;
 
         for (int i=0; i<7; i++)
         {   //absolutely need to manually set the length of each string as this determines the row height for the items in grid view.  Different string lengths
@@ -414,14 +402,6 @@ private int flipperCounter = 0;
         _allImages = new Bitmap[]{imageOne, imageTwo, imageThree, imageFour, imageFive, imageSix, imageSeven};
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
     //this function is for setting up nearly all of the data in the program.  It used to live in the onCreate method, but it got too messy up there
     public void setUp(String today) {
         if (!doneLoading)
@@ -432,10 +412,6 @@ private int flipperCounter = 0;
 
 
             //now that we know what today is, get it's weather and set to text view
-
-            String todaysWeather = "Loading...";
-//            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-//            weatherView.setText(todaysWeather);
 
 
             //create our arrayAdapter for the spinner
@@ -455,14 +431,7 @@ private int flipperCounter = 0;
             //set our adapter
             gridView.setAdapter(gridAdapter);
 
-//            TextView flipperText = (TextView) findViewById(R.id.flipper_text0);
-//            flipperText.setText("Loading...");
-
         } else {
-
-            ImageView imageView = (ImageView)(findViewById(R.id.image_holder));
-            imageView.setImageBitmap(_allImages[0]);
-
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
 
@@ -471,10 +440,7 @@ private int flipperCounter = 0;
 
             //now that we know what today is, get it's weather and set to text view
 
-            String todaysWeather = _allWeather[0];
-//            TextView weatherView = (TextView) findViewById(R.id.weather_holder);
-//            weatherView.setText(todaysWeather);
-
+            String todaysWeather;
 
             //create our arrayAdapter for the spinner
 
@@ -494,7 +460,7 @@ private int flipperCounter = 0;
                     //only update the UI if the user picks a different day
                     if (!(selected.equals(_current))) {
                         _current = selected;
-                        setDay(selected, position);
+                        setDay(selected);
                         setFlipper(position);
                     }
                 }
@@ -521,7 +487,7 @@ private int flipperCounter = 0;
                     String selected = _week[position];
                     if (!(selected.equals(_current))) {
                         _current = selected;
-                        setDay(selected, position);
+                        setDay(selected);
                         //also this time we need to keep our spinner in sync as well
                         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                         spinner.setSelection(position, true);
@@ -546,9 +512,6 @@ private int flipperCounter = 0;
             viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
             viewFlipper.setInAnimation(context, R.anim.abc_fade_in);
             viewFlipper.setOutAnimation(context, R.anim.abc_fade_out);
-
-            StringBuilder builder = new StringBuilder();
-            String textId = "flipper_text";
 
             for (int i=0; i<7; i++)
             {
@@ -617,6 +580,7 @@ private int flipperCounter = 0;
         }
     }
 
+
     //this function builds out our url string and passes it to the getData function
     public static void buildUrl(String zip) {
         StringBuilder urlBuilder = new StringBuilder();
@@ -628,10 +592,10 @@ private int flipperCounter = 0;
         _urlString = completedURL;
     }
 
+    //create an instance of our external library file and call its method to determine our network connectivity
     public Boolean connectionStatus() {
        NetworkManager manager = new NetworkManager();
-        boolean isConnected = manager.connectionStatus(context);
-        return isConnected;
+        return manager.connectionStatus(context);
     }
 
     public static String getResponse(URL url) {
@@ -732,9 +696,6 @@ private int flipperCounter = 0;
             getAllWeather();
             doneLoading = true;
 
-            //find our imageView and apply today's weather icon
-            ImageView imageView = (ImageView) (findViewById(R.id.image_holder));
-            imageView.setImageBitmap(_allImages[0]);
 
             //find our selected day and set the current day as our default (can be changed later)
             TextView textView = (TextView) findViewById(R.id.selected_day);
@@ -756,7 +717,7 @@ private int flipperCounter = 0;
                     //only update the UI if the user picks a different day
                     if (!(selected.equals(_current))) {
                         _current = selected;
-                        setDay(selected, position);
+                        setDay(selected);
                         setFlipper(position);
                     }
                 }
@@ -781,7 +742,7 @@ private int flipperCounter = 0;
                     System.out.println("Selected day was:  " + selected);
                     if (!(selected.equals(_current))) {
                         _current = selected;
-                        setDay(selected, position);
+                        setDay(selected);
                         //also this time we need to keep our spinner in sync as well
                         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                         spinner.setSelection(position, true);
@@ -815,9 +776,6 @@ private int flipperCounter = 0;
             viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
             viewFlipper.setInAnimation(context, R.anim.abc_fade_in);
             viewFlipper.setOutAnimation(context, R.anim.abc_fade_out);
-
-            StringBuilder builder = new StringBuilder();
-            String textId = "flipper_text";
 
             for (int i=0; i<7; i++)
             {
@@ -942,7 +900,7 @@ private int flipperCounter = 0;
                     //only update the UI if the user picks a different day
                     if (!(selected.equals(_current))) {
                         _current = selected;
-                        setDay(selected, flipperCounter);
+                        setDay(selected);
                         Spinner spinner = (Spinner) findViewById(R.id.day_selector);
                         spinner.setSelection(flipperCounter, true);
                     }
